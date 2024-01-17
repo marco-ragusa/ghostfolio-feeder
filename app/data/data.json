@@ -1,0 +1,73 @@
+[
+    {
+        "symbol": "21BC.DE",
+        "profile_data": {
+            "assetClass": "EQUITY",
+            "assetSubClass": "CRYPTOCURRENCY",
+            "comment": "",
+            "currency": "EUR",
+            "name": "21Shares Bitcoin Core ETP",
+            "scraperConfiguration": {
+                "url": "https://api.boerse-frankfurt.de/v1/data/quote_box/single?isin=CH1199067674&mic=XETR",
+                "selector": "$.lastPrice"
+            },
+            "symbolMapping": {}
+        },
+        "data_source": {
+            "name": "boerse_frankfurt",
+            "ticker": "XETR:CH1199067674",
+            "start_date": "2022-07-31"
+        }
+    },
+    {
+        "symbol": "ALL-IN-AZN",
+        "profile_data": {
+            "assetClass": "EQUITY",
+            "assetSubClass": "MUTUALFUND",
+            "comment": "",
+            "currency": "EUR",
+            "name": "Allianz Insieme Linea Azionaria",
+            "scraperConfiguration": {},
+            "symbolMapping": {}
+        },
+        "data_source": {
+            "name": "corriere",
+            "ticker": "PEX0ALPFRA12.EUR",
+            "start_date": "2016-01-01"
+        }
+    },
+    {
+        "symbol": "BYBLOS-DIN",
+        "profile_data": {
+            "assetClass": "EQUITY",
+            "assetSubClass": "MUTUALFUND",
+            "comment": "",
+            "currency": "EUR",
+            "name": "BYBLOS Comparto Dinamico",
+            "scraperConfiguration": {},
+            "symbolMapping": {}
+        },
+        "data_source": {
+            "name": "byblos",
+            "ticker": "211",
+            "start_date": "2008-10-01"
+        }
+    },
+    {
+        "symbol": "FONTE-DIN",
+        "profile_data": {
+            "assetClass": "EQUITY",
+            "assetSubClass": "MUTUALFUND",
+            "comment": "",
+            "currency": "EUR",
+            "name": "Fon.Te. Comparto Dinamico",
+            "scraperConfiguration": {},
+            "symbolMapping": {}
+        },
+        "data_source": {
+            "name": "fondofonte",
+            "ticker": "comparto-dinamico",
+            "start_date": "2008-05-01"
+        }
+    }
+]

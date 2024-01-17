@@ -1,0 +1,1 @@
+from ghostfolio.ghostfolio import Ghostfolio

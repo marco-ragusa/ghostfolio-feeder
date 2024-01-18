@@ -13,7 +13,10 @@ def loop(host: str, access_token: str, interval_minutes: int) -> None:
 
         for data in data_list:
             print(f"Processing {data['symbol']} symbol...")
-            ghostfolio_feeder(host, access_token, data['symbol'], data['profile_data'], data['data_source'])
+            try:
+                ghostfolio_feeder(host, access_token, data['symbol'], data['profile_data'], data['data_source'])
+            except Exception as e:
+                print(f"ERROR: {e}")
 
         seconds_next_interval = seconds_until_next_interval(interval_minutes)
         print(f"Wait {seconds_next_interval} seconds until the next loop")

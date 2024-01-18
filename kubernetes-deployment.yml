@@ -1,0 +1,43 @@
+# Namespace definition
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: ghostfolio
+
+---
+
+# Pod definition
+apiVersion: v1
+kind: Pod
+metadata:
+  name: ghostfolio-feeder
+  namespace: ghostfolio
+spec:
+  containers:
+  - name: ghostfolio-feeder
+    image: ghostfolio-feeder  # Docker image name
+    imagePullPolicy: Never
+    volumeMounts:
+    - name: app-data
+      mountPath: /app/data
+    envFrom:
+    - configMapRef:
+        name: ghostfolio-feeder-env
+  restartPolicy: Never
+  volumes:
+  - name: app-data
+    hostPath:
+      path: /path/to/host/app/data  # Host volume path
+
+---
+
+# ConfigMap definition
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ghostfolio-feeder-env
+  namespace: ghostfolio
+data:
+  HOST: https://example.com
+  ACCESS_TOKEN: your_access_token
+  INTERVAL_MINUTES: "30"

@@ -1,10 +1,11 @@
+# Ghostfolio Data Feeder
 
-## Ghostfolio Data Feeder
+Ghostfolio-feeder extends the functionality of Ghostfolio by automatically adding data via internal APIs. The sources of the data are taken by scraping financial websites.
 
-Ghostfolio-feeder extends the functionality of Ghostfolio by automatically adding data via internal APIs. The datasources from which the data is taken are obtained by scraping finacial websites.
+## Configuration
 
-### Configuration
-The configurations are contained in the directory `app/data/` and are in the following format:
+The configurations can be found in the path `app/data/` and are structured in the following format:
+
 ```json
 [
     {
@@ -27,10 +28,11 @@ The configurations are contained in the directory `app/data/` and are in the fol
 ]
 ```
 
-### Build and run
+## Build and run
+
 ```bash
-# Modify the env file before executing
-# vi .env.example
 cp .env.example .env
+# Modify the env file before executing
+# vi .env
 docker compose up -d --build --force-recreate
 ```

@@ -34,5 +34,8 @@ The configurations can be found in the path `app/data/` and are structured in th
 cp .env.example .env
 # Modify the env file before executing
 # vi .env
+cp app/data/data.json.example app/data/data.json
+# Modify the data.json file before executing
+# vi app/data/data.json
 docker compose up -d --build --force-recreate
 ```

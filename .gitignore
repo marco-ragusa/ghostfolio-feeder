@@ -1,2 +1,25 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Environments
 .env
+.env.fish
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Config file
 app/data/data.json
+
+# General
+.DS_Store
+.AppleDouble
+.LSOverride

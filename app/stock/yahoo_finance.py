@@ -2,7 +2,7 @@ import yfinance as yf
 import pandas as pd
 # Import utils
 try:
-    import stock.utils as utils
+    from stock import utils
 except ImportError:
     import utils
 

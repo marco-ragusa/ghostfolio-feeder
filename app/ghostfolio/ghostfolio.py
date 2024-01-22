@@ -1,5 +1,5 @@
 import requests
-requests.packages.urllib3.disable_warnings() 
+requests.packages.urllib3.disable_warnings()
 
 class Ghostfolio:
     def __init__(self, host, access_token, symbol) -> None:
@@ -37,7 +37,8 @@ class Ghostfolio:
             f'{self.host}/api/v1/auth/anonymous',
             headers=headers,
             json=json_data,
-            verify=False
+            verify=False,
+            timeout=10,
         )
         return response.json()['authToken']
 
@@ -48,7 +49,8 @@ class Ghostfolio:
         response = requests.post(
             f'{self.host}/api/v1/admin/profile-data/MANUAL/{self.symbol}',
             headers=headers,
-            verify=False
+            verify=False,
+            timeout=10,
         )
         return response.json()
 
@@ -61,6 +63,7 @@ class Ghostfolio:
             headers=headers,
             json=profile_data,
             verify=False,
+            timeout=10,
         )
         return response.json()
 
@@ -71,7 +74,8 @@ class Ghostfolio:
         response = requests.get(
             f'{self.host}/api/v1/admin/market-data/MANUAL/{self.symbol}',
             headers=headers,
-            verify=False
+            verify=False,
+            timeout=10,
         )
         return response.json()["marketData"]
 
@@ -82,7 +86,8 @@ class Ghostfolio:
         response = requests.get(
             f'{self.host}/api/v1/admin/market-data',
             headers=headers,
-            verify=False
+            verify=False,
+            timeout=10,
         )
         symbol_list = response.json()["marketData"]
         return [symbol for symbol in symbol_list if symbol["symbol"] == self.symbol]
@@ -113,6 +118,7 @@ class Ghostfolio:
             headers=headers,
             json=market_data,
             verify=False,
+            timeout=10,
         )
 
         self.update_market_data()
@@ -138,7 +144,8 @@ class Ghostfolio:
         response = requests.delete(
             f'{self.host}/api/v1/admin/profile-data/MANUAL/{self.symbol}',
             headers=headers,
-            verify=False
+            verify=False,
+            timeout=10,
         )
 
         return response.status_code

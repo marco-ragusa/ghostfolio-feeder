@@ -2,7 +2,7 @@ import pandas as pd
 import requests
 # Import utils
 try:
-    import stock.utils as utils
+    from stock import utils
 except ImportError:
     import utils
 
@@ -22,24 +22,29 @@ def corriere(ticker: str, start_date: str | None = None, end_date: str | None = 
         # 'startTimepoint': '06^%^2F13^%^2F2023'
     }
 
-    response = requests.get(f'https://borsa.corriere.it/api/TimeSeries/{ticker}', params=params, headers=headers)
+    response = requests.get(
+        f'https://borsa.corriere.it/api/TimeSeries/{ticker}',
+        params=params,
+        headers=headers,
+        timeout=10,
+    )
 
     json_data = response.json()['series']
 
     # Convert JSON to DataFrame
     df = pd.json_normalize(json_data)
-    
+
     # Parse timestamp to date and convert it to DateTime
     df['timestamp'] = pd.to_datetime(df['timestamp'], utc=True).dt.date
     df['timestamp'] = pd.to_datetime(df['timestamp'])
-    
+
     # Set timestamp as index and rename to "date"
     df.set_index('timestamp', inplace=True)
     df.index.name = 'date'
 
     # Rename the "close" column to "marketPrice"
     df.rename(columns={'close': 'marketPrice'}, inplace=True)
-            
+   
     # Select only Date index and marketPrice columns
     df = df[['marketPrice']]
 

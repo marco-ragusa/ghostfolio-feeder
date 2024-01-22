@@ -1,15 +1,15 @@
+from datetime import datetime, timedelta
 from ghostfolio import Ghostfolio
 from stock import Stock, data_source_mapping
-from datetime import datetime, timedelta
 
 
 def subtract_days_from_date(input_date: str, days_to_subtract: int = 0) -> str:
     # Convert the date string to a datetime object
     input_date = datetime.strptime(input_date, '%Y-%m-%d')
-    
+
     # Calculate the new date by subtracting the desired days
     result_date = input_date - timedelta(days=days_to_subtract)
-    
+
     # Return the new date as a string in the format 'YYYY-MM-DD'.
     return result_date.strftime('%Y-%m-%d')
 

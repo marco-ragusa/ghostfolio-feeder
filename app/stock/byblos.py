@@ -1,9 +1,9 @@
+import locale
 import pandas as pd
 import requests
-import locale
 # Import utils
 try:
-    import stock.utils as utils
+    from stock import utils
 except ImportError:
     import utils
 
@@ -27,7 +27,12 @@ def byblos(ticker: str, start_date: str | None = None, end_date: str | None = No
         'lang': 'it',
     }
 
-    response = requests.get('https://www.fondobyblos.it/grafici/tabella.php', params=params, headers=headers)
+    response = requests.get(
+        'https://www.fondobyblos.it/grafici/tabella.php',
+        params=params,
+        headers=headers,
+        timeout=10,
+    )
 
     json_data = response.json()
 

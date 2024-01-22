@@ -1,7 +1,7 @@
-import pandas as pd
 import json
 import random
 from datetime import date
+import pandas as pd
 
 
 def df_resample_range(df: pd.DataFrame, start_date: str | None = None, end_date: str | None = None) -> pd.DataFrame:
@@ -29,7 +29,10 @@ def df_resample_range(df: pd.DataFrame, start_date: str | None = None, end_date:
         df = pd.concat([df, last_row])
 
     # Select only defined Date range
-    df.loc[start_date:end_date]
+    df = df.loc[start_date:end_date]
+
+    # Remove duplicates from index
+    df = df[~df.index.duplicated(keep='last')]
 
     # Fill new missing dates in index
     return df.resample('D').ffill()

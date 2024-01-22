@@ -1,10 +1,10 @@
+import locale
 import requests
 import pandas as pd
-import locale
 from bs4 import BeautifulSoup
 # Import utils
 try:
-    import stock.utils as utils
+    from stock import utils
 except ImportError:
     import utils
 
@@ -12,7 +12,7 @@ except ImportError:
 def fondofonte(ticker: str, start_date: str | None = None, end_date: str | None = None) -> list:
     headers = {
         'User-Agent': utils.get_random_user_agent(),
-        f'Referer': 'https://www.fondofonte.it/gestione-finanziaria/i-valori-quota-dei-comparti/{ticker}/',
+        'Referer': f'https://www.fondofonte.it/gestione-finanziaria/i-valori-quota-dei-comparti/{ticker}/',
         'Sec-Fetch-Dest': 'document',
         'Sec-Fetch-Mode': 'navigate',
         'Sec-Fetch-Site': 'same-origin',
@@ -23,6 +23,7 @@ def fondofonte(ticker: str, start_date: str | None = None, end_date: str | None 
     response = requests.get(
         f"https://www.fondofonte.it/gestione-finanziaria/i-valori-quota-dei-comparti/{ticker}/",
         headers=headers,
+        timeout=10,
     )
 
     html = response.text

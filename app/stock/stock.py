@@ -13,16 +13,16 @@ class Stock:
         self.ticker = ticker
         self.start_date = start_date
         self.end_date = end_date
-    
+
     def yahoo_finance(self) -> list:
         return yahoo_finance(self.ticker, self.start_date, self.end_date)
-    
+
     def mvis(self) -> list:
         return mvis(self.ticker, self.start_date, self.end_date)
-        
+
     def corriere(self) -> list:
         return corriere(self.ticker, self.start_date, self.end_date)
-    
+
     def byblos(self) -> list:
         return byblos(self.ticker, self.start_date, self.end_date)
 

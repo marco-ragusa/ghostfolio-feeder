@@ -30,9 +30,17 @@ The configurations can be found in the path `app/data/` and are structured in th
 
 ## Build and run
 
+Make your own copies of the environment and configured stocks, and edit them.
+To run this alongside a local ghostfolio docker installation:
+* Set `HOST` to `http://host.docker.internal:3333`
+* Set `ACCESS_TOKEN` to your access token for docker.
+
 ```bash
 cp .env.example .env
 # Modify the env file before executing
 # vi .env
+cp app/data/data.json.example app/data/data.json
+# Modify the data.json file before executing
+# vi app/data/data.json
 docker compose up -d --build --force-recreate
 ```

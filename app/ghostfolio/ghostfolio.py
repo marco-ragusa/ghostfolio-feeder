@@ -1,5 +1,5 @@
 import requests
-requests.packages.urllib3.disable_warnings()
+
 
 class Ghostfolio:
     def __init__(self, host, access_token, symbol) -> None:

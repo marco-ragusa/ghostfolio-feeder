@@ -41,15 +41,14 @@ def byblos(ticker: str, start_date: str | None = None, end_date: str | None = No
 
     # Convert data to datetime format
     locale.setlocale(locale.LC_ALL, 'it_IT')
-    df['timestamp'] = pd.to_datetime(df['data'], format='%B %Y')
+    df['data'] = pd.to_datetime(df['data'], format='%B %Y')
     locale.setlocale(locale.LC_ALL, '')
 
     # Convert valore to float
     df['valore'] = df['valore'].str.replace(',', '.').astype(float)
 
     # Set timestamp as index and rename to "date"
-    df.set_index('timestamp', inplace=True)
-    df.index.name = 'date'
+    df.set_index('data', inplace=True)
 
     # Rename the "close" column to "marketPrice"
     df.rename(columns={'valore': 'marketPrice'}, inplace=True)

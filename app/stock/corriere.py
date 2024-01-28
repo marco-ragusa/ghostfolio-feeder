@@ -44,7 +44,7 @@ def corriere(ticker: str, start_date: str | None = None, end_date: str | None = 
 
     # Rename the "close" column to "marketPrice"
     df.rename(columns={'close': 'marketPrice'}, inplace=True)
-   
+
     # Select only Date index and marketPrice columns
     df = df[['marketPrice']]
 
@@ -56,5 +56,4 @@ def corriere(ticker: str, start_date: str | None = None, end_date: str | None = 
 
 
 if __name__ == "__main__":
-    # utils.print_list(corriere("PEX0ALPFRA12.EUR", "2000-01-01"))
-    utils.print_list(corriere("PEX0ALPFRA12.EUR", "2023-10-19"))
+    utils.print_list(corriere("PEX0ALPFRA12.EUR", "2000-01-01"))

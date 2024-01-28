@@ -69,5 +69,39 @@
             "ticker": "comparto-dinamico",
             "start_date": "2008-05-01"
         }
+    },
+    {
+        "symbol": "CSV-LOCAL-EXAMPLE",
+        "profile_data": {
+            "assetClass": "EQUITY",
+            "assetSubClass": "MUTUALFUND",
+            "comment": "",
+            "currency": "EUR",
+            "name": "CSV Local Example",
+            "scraperConfiguration": {},
+            "symbolMapping": {}
+        },
+        "data_source": {
+            "name": "local",
+            "ticker": "example.csv",
+            "start_date": "2020-01-01"
+        }
+    },
+    {
+        "symbol": "JSON-LOCAL-EXAMPLE",
+        "profile_data": {
+            "assetClass": "EQUITY",
+            "assetSubClass": "MUTUALFUND",
+            "comment": "",
+            "currency": "EUR",
+            "name": "JSON Local Example",
+            "scraperConfiguration": {},
+            "symbolMapping": {}
+        },
+        "data_source": {
+            "name": "local",
+            "ticker": "example.json",
+            "start_date": "2020-01-01"
+        }
     }
 ]

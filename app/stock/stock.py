@@ -4,6 +4,7 @@ from .corriere import corriere
 from .byblos import byblos
 from .boerse_frankfurt import boerse_frankfurt
 from .fondofonte import fondofonte
+from .local import local
 
 
 class Stock:
@@ -31,6 +32,9 @@ class Stock:
 
     def fondofonte(self) -> list:
         return fondofonte(self.ticker, self.start_date, self.end_date)
+    
+    def local(self) -> list:
+        return local(self.ticker, self.start_date, self.end_date)
 
 
 data_source_mapping = {
@@ -40,4 +44,5 @@ data_source_mapping = {
     "byblos": Stock.byblos,
     "boerse_frankfurt": Stock.boerse_frankfurt,
     "fondofonte": Stock.fondofonte,
+    "local": Stock.local,
 }

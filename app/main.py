@@ -6,7 +6,7 @@ from time_interval import seconds_until_next_interval
 
 
 def loop(host: str, access_token: str, interval_minutes: int) -> None:
-    json_file_path = path.join(path.dirname(__file__), 'data', 'data.json')
+    json_file_path = path.join(path.dirname(__file__), 'data', 'profiles.json')
     while True:
         with open(json_file_path, 'r', encoding='UTF8') as file:
             data_list = json.load(file)

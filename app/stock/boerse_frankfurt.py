@@ -1,4 +1,4 @@
-import pandas as pd
+from datetime import datetime
 import requests
 # Import utils
 try:
@@ -7,8 +7,24 @@ except ImportError:
     import utils
 
 
-def boerse_frankfurt(ticker: str, start_date: str | None = None, end_date: str | None = None) -> list:
-    
+def boerse_frankfurt(
+        ticker: str, start_date: str | None = None, end_date: str | None = None
+    ) -> list:
+    """
+    Fetches historical market data for a given ticker symbol from the Börse Frankfurt API.
+
+    Args:
+        ticker (str): The ticker symbol of the financial instrument.
+        start_date (str, optional): The start date for data retrieval (YYYY-MM-DD format).
+        end_date (str, optional): The end date for data retrieval (YYYY-MM-DD format).
+
+    Returns:
+        list: A list of dictionaries containing historical market data in the following format:
+            {'date': 'yyyy-mm-dd', 'marketPrice': int}
+    """
+
+    # Get market data
+    base_url = 'https://api.boerse-frankfurt.de/v1/tradingview/lightweight/history/single'
     headers = {
         'User-Agent': utils.get_random_user_agent(),
         'Accept': 'application/json, text/plain, */*',
@@ -18,38 +34,31 @@ def boerse_frankfurt(ticker: str, start_date: str | None = None, end_date: str |
         'Sec-Fetch-Mode': 'cors',
         'Sec-Fetch-Site': 'same-site',
     }
+    query_params = {
+        'resolution': 'D',
+        'isKeepResolutionForLatestWeeksIfPossible': 'false',
+        'from': '0000000000',
+        'to': '9999999999',
+        'isBidAskPrice': 'false',
+        'symbols': ticker
+    }
+    response = requests.get(base_url, params=query_params, headers=headers, timeout=10)
+    market_data = response.json()[0]['quotes']['timeValuePairs']
 
-    response = requests.get(
-        f'https://api.boerse-frankfurt.de/v1/tradingview/lightweight/history/single?resolution=D&isKeepResolutionForLatestWeeksIfPossible=false&from=0000000000&to=9999999999&isBidAskPrice=false&symbols={ticker}',
-        headers=headers,
-        timeout=10,
-    )
+    # Format market data in this way {'date': 'yyyy-mm-dd', 'marketPrice': int}
+    market_data = [{
+        "marketPrice": item["value"],
+        "date": datetime.fromtimestamp(
+            item["time"]
+        ).strftime("%Y-%m-%d")
+    } for item in market_data]
 
-    json_data = response.json()[0]['quotes']['timeValuePairs']
+    # Fill missing dates
+    end_date = end_date or datetime.today().strftime("%Y-%m-%d")
+    market_data = utils.fill_missing_dates(market_data, start_date=start_date, end_date=end_date)
 
-    # Convert JSON to DataFrame
-    df = pd.json_normalize(json_data)
-
-    # Parse time to date and convert it to DateTime
-    df['time'] = pd.to_datetime(df['time'], utc=True, unit='s').dt.date
-    df['time'] = pd.to_datetime(df['time'])
-
-    # Set time as index and rename to "date"
-    df.set_index('time', inplace=True)
-    df.index.name = 'date'
-
-    # Rename the "value" column to "marketPrice"
-    df.rename(columns={'value': 'marketPrice'}, inplace=True)
-   
-    # Select only Date index and marketPrice columns
-    df = df[['marketPrice']]
-
-    # Resample by day and select a date range
-    df = utils.df_resample_range(df, start_date, end_date)
-
-    # Convert to list with iso time format
-    return utils.df_to_list(df)
+    return market_data
 
 
 if __name__ == "__main__":
-    utils.print_list(boerse_frankfurt("XETR:CH1199067674", "2022-07-31"))
+    utils.print_list(boerse_frankfurt("XETR:CH1199067674", start_date="2022-07-31"))

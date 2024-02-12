@@ -1,7 +1,6 @@
-import locale
-import requests
-import pandas as pd
+from datetime import datetime
 from bs4 import BeautifulSoup
+import requests
 # Import utils
 try:
     from stock import utils
@@ -10,22 +9,35 @@ except ImportError:
 
 
 def fondofonte(ticker: str, start_date: str | None = None, end_date: str | None = None) -> list:
+    """
+    Fetches historical market data for a given ticker symbol from Fondo Fon.Te web page.
+
+    Args:
+        ticker (str): The ticker symbol of the financial instrument.
+        start_date (str, optional): The start date for data retrieval (YYYY-MM-DD format).
+        end_date (str, optional): The end date for data retrieval (YYYY-MM-DD format).
+
+    Returns:
+        list: A list of dictionaries containing historical market data in the following format:
+            {'date': 'yyyy-mm-dd', 'marketPrice': int}
+    """
+
+    # Get web page
     headers = {
         'User-Agent': utils.get_random_user_agent(),
-        'Referer': f'https://www.fondofonte.it/gestione-finanziaria/i-valori-quota-dei-comparti/{ticker}/',
+        'Referer': \
+            f'https://www.fondofonte.it/gestione-finanziaria/i-valori-quota-dei-comparti/{ticker}/',
         'Sec-Fetch-Dest': 'document',
         'Sec-Fetch-Mode': 'navigate',
         'Sec-Fetch-Site': 'same-origin',
         'Sec-Fetch-User': '?1',
     }
-
     # Make an HTTP request and get the content of the page
     response = requests.get(
         f"https://www.fondofonte.it/gestione-finanziaria/i-valori-quota-dei-comparti/{ticker}/",
         headers=headers,
         timeout=10,
     )
-
     html = response.text
 
     # Create the BeautifulSoup object
@@ -35,7 +47,7 @@ def fondofonte(ticker: str, start_date: str | None = None, end_date: str | None 
     toggle_elements = soup.find_all(class_='toggle-acf')
 
     # Create a dictionary to store the information
-    fund_data = []
+    market_data = []
 
     # Iterate through all toggle elements
     for toggle in toggle_elements:
@@ -57,29 +69,20 @@ def fondofonte(ticker: str, start_date: str | None = None, end_date: str | None 
             quote = quote_row.find_all('span', {'class': None})[1].text.strip()
 
             # Add the information to the list
-            fund_data.append({'date': f'{date} {year}', 'marketPrice': quote})
+            market_data.append({'date': f'{date} {year}', 'marketPrice': quote})
 
-    # Create a DataFrame from the list of dictionaries
-    df = pd.json_normalize(fund_data)
+    # Format market data in this way {'date': 'yyyy-mm-dd', 'marketPrice': int}
+    market_data = [{
+        "marketPrice": float(item["marketPrice"].replace(',','.')),
+        "date": utils.convert_italian_date(item["date"])
+    } for item in market_data]
 
-    # Convert data to datetime format
-    locale.setlocale(locale.LC_ALL, 'it_IT')
-    df['date'] = pd.to_datetime(df['date'], format='%B %Y')
-    locale.setlocale(locale.LC_ALL, '')
+    # Fill missing dates
+    end_date = end_date or datetime.today().strftime("%Y-%m-%d")
+    market_data = utils.fill_missing_dates(market_data, start_date=start_date, end_date=end_date)
 
-    # Convert valore to float
-    df['marketPrice'] = df['marketPrice'].str.replace(',', '.').astype(float)
-
-    # Set timestamp as index and rename to "date"
-    df.set_index('date', inplace=True)
-
-    # Resample by day and select a date range
-    df = utils.df_resample_range(df, start_date, end_date)
-
-    # Convert to list with iso time format
-    return utils.df_to_list(df)
+    return market_data
 
 
 if __name__ == "__main__":
-    # utils.print_list(fondofonte("comparto-dinamico", "2008-05-01"))
     utils.print_list(fondofonte("comparto-dinamico", "2023-10-19"))

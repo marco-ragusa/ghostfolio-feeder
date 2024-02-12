@@ -1,4 +1,6 @@
-import pandas as pd
+import csv
+import json
+from datetime import datetime
 # Import utils
 try:
     from stock import utils
@@ -7,34 +9,45 @@ except ImportError:
 
 
 def local(ticker: str, start_date: str | None = None, end_date: str | None = None) -> list:
+    """
+    Retrieve market data for a given ticker from a JSON or CSV file.
+
+    Args:
+        ticker (str): The ticker symbol for the market data.
+        start_date (str, optional): The start date in "YYYY-MM-DD" format. Defaults to None.
+        end_date (str, optional): The end date in "YYYY-MM-DD" format. Defaults to None.
+
+    Returns:
+        list: A list of dictionaries containing historical market data in the following format:
+            {'date': 'yyyy-mm-dd', 'marketPrice': int}
+
+    Raises:
+        ValueError: If the file format is not supported. Only JSON or CSV files are supported.
+    """
+
     # Define the file path
     file_path = f"app/data/local/{ticker}"
 
     # Check if file ends with ".json" or ".csv".
     if not file_path.lower().endswith((".json", ".csv")):
-        raise ValueError("Formato del file non supportato. Utilizzare solo JSON o CSV.")
+        raise ValueError("File format not supported. Only use JSON or CSV.")
 
-    # JSON or CSV to DataFrame
-    if file_path.lower().endswith(".json"):
-        df = pd.read_json(file_path)
-    elif file_path.lower().endswith(".csv"):
-        df = pd.read_csv(file_path)
+    market_data = []
 
-    # Select only the desired columns
-    df = df[["date", "marketPrice"]]
+    # JSON or CSV parsing
+    with open(file_path, 'r', encoding='utf-8') as file:
+        if file_path.lower().endswith(".json"):
+            market_data = json.load(file)
+        elif file_path.lower().endswith(".csv"):
+            csv_reader = csv.DictReader(file)
+            market_data = list(csv_reader)
 
-    # Convert data to datetime format
-    df['date'] = pd.to_datetime(df['date'])
+    # Fill missing dates
+    end_date = end_date or datetime.today().strftime("%Y-%m-%d")
+    market_data = utils.fill_missing_dates(market_data, start_date=start_date, end_date=end_date)
 
-    # Set date as index
-    df.set_index('date', inplace=True)
-
-    # Resample by day and select a date range
-    df = utils.df_resample_range(df, start_date, end_date)
-
-    # Convert to list with iso time format
-    return utils.df_to_list(df)
+    return market_data
 
 
 if __name__ == "__main__":
-    utils.print_list(local("example.csv"))
+    utils.print_list(local("example.csv", start_date="2019-01-01"))

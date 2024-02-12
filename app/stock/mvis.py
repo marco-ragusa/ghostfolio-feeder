@@ -1,4 +1,4 @@
-import pandas as pd
+from datetime import datetime
 import requests
 # Import utils
 try:
@@ -8,6 +8,20 @@ except ImportError:
 
 
 def mvis(ticker: str, start_date: str | None = None, end_date: str | None = None) -> list:
+    """
+    Fetches historical market data for a given ticker symbol from MarketVector API.
+
+    Args:
+        ticker (str): The ticker symbol of the financial instrument.
+        start_date (str, optional): The start date for data retrieval (YYYY-MM-DD format).
+        end_date (str, optional): The end date for data retrieval (YYYY-MM-DD format).
+
+    Returns:
+        list: A list of dictionaries containing historical market data in the following format:
+            {'date': 'yyyy-mm-dd', 'marketPrice': int}
+    """
+
+    # Get market data
     headers = {
         'User-Agent': utils.get_random_user_agent(),
         'Content-Type': 'application/json; charset=UTF-8',
@@ -19,8 +33,16 @@ def mvis(ticker: str, start_date: str | None = None, end_date: str | None = None
         'Sec-Fetch-Mode': 'cors',
         'Sec-Fetch-Site': 'cross-site',
     }
-    json_data = {
-        'query': 'query GetMultipleChartData($ticker1: String, $timeRange1: String) {\n  ticker1: getMultipleChartData(IndexTicker: $ticker1, TimeRangeTypeName: $timeRange1) {\n    ticker\n    timestamp\n    y\n    indexType\n    timezone\n    timezoneOffset\n}\n}\n',
+    json = {
+        'query': \
+        """
+        query GetMultipleChartData($ticker1: String, $timeRange1: String) {
+            ticker1: getMultipleChartData(IndexTicker: $ticker1, TimeRangeTypeName: $timeRange1) {
+                timestamp
+                y
+            }
+        }
+        """,
         'variables': {
             'ticker1': ticker,
             'timeRange1': 'Inception',
@@ -29,33 +51,25 @@ def mvis(ticker: str, start_date: str | None = None, end_date: str | None = None
     response = requests.post(
         'https://wzszugyhvjh3bo4rqefrhsswdm.appsync-api.eu-central-1.amazonaws.com/graphql',
         headers=headers,
-        json=json_data,
+        json=json,
         timeout=10,
     )
-    json_data = response.json()['data']['ticker1']
+    market_data = response.json()['data']['ticker1']
 
-    # Convert JSON to DataFrame
-    df = pd.json_normalize(json_data)
+    # Format market data in this way {'date': 'yyyy-mm-dd', 'marketPrice': int}
+    market_data = [{
+        "marketPrice": item["y"],
+        "date": datetime.fromtimestamp(
+            int(item["timestamp"])
+        ).strftime("%Y-%m-%d")
+    } for item in market_data]
 
-    # Convert timestamp to datetime
-    df['timestamp'] = pd.to_datetime(df['timestamp'].astype(int), unit='s')
+    # Fill missing dates
+    end_date = end_date or datetime.today().strftime("%Y-%m-%d")
+    market_data = utils.fill_missing_dates(market_data, start_date=start_date, end_date=end_date)
 
-    # Set timestamp as index and rename to "date"
-    df.set_index('timestamp', inplace=True)
-    df.index.name = 'date'
-
-    # Rename the "y" column to "marketPrice"
-    df.rename(columns={'y': 'marketPrice'}, inplace=True)
-
-    # Select only date index and marketPrice columns
-    df = df[['marketPrice']]
-
-    # Resample by day and select a date range
-    df = utils.df_resample_range(df, start_date, end_date)
-
-    # Convert to list with iso time format
-    return utils.df_to_list(df)
+    return market_data
 
 
 if __name__ == "__main__":
-    utils.print_list(mvis("MVDA5", "2000-01-01"))
+    utils.print_list(mvis("MVDA5", start_date="2000-01-01"))

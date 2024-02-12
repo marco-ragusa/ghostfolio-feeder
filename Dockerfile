@@ -1,5 +1,5 @@
 # Use a base Python image
-FROM python:3.12
+FROM python:3.12-alpine
 
 # Improve container logging
 ENV PYTHONUNBUFFERED=1 \

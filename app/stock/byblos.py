@@ -60,4 +60,4 @@ def byblos(ticker: str, start_date: str | None = None, end_date: str | None = No
 
 
 if __name__ == "__main__":
-    utils.print_list(marketPrice = byblos("211", "2000-01-01"))
+    utils.print_list(byblos("211", "2000-01-01"))

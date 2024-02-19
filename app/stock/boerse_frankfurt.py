@@ -54,7 +54,6 @@ def boerse_frankfurt(
     } for item in market_data]
 
     # Fill missing dates
-    end_date = end_date or datetime.today().strftime("%Y-%m-%d")
     market_data = utils.fill_missing_dates(market_data, start_date=start_date, end_date=end_date)
 
     return market_data

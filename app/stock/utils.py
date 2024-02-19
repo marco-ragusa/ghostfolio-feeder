@@ -56,6 +56,9 @@ def fill_missing_dates(
         A new list of dictionaries with all dates filled in.
     """
 
+    # Add end_date if missing with current date
+    end_date = end_date or datetime.today().strftime("%Y-%m-%d")
+
     # Sort data by date and remove duplicates
     data_list = sorted(data_list, key=lambda item: item["date"])
     data_list = remove_duplicates(data_list)
@@ -66,7 +69,7 @@ def fill_missing_dates(
         data_list.insert(0,
             {'date': start_date, "marketPrice": data_list[0]["marketPrice"]}
         )
-    if end_date and end_date > data_list[-1]["date"]:
+    if end_date > data_list[-1]["date"]:
         data_list.append(
             {'date': end_date, "marketPrice": data_list[-1]["marketPrice"]}
         )

@@ -1,6 +1,5 @@
 import csv
 import json
-from datetime import datetime
 # Import utils
 try:
     from stock import utils
@@ -43,7 +42,6 @@ def local(ticker: str, start_date: str | None = None, end_date: str | None = Non
             market_data = list(csv_reader)
 
     # Fill missing dates
-    end_date = end_date or datetime.today().strftime("%Y-%m-%d")
     market_data = utils.fill_missing_dates(market_data, start_date=start_date, end_date=end_date)
 
     return market_data

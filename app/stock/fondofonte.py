@@ -1,4 +1,3 @@
-from datetime import datetime
 from bs4 import BeautifulSoup
 import requests
 # Import utils
@@ -78,11 +77,10 @@ def fondofonte(ticker: str, start_date: str | None = None, end_date: str | None 
     } for item in market_data]
 
     # Fill missing dates
-    end_date = end_date or datetime.today().strftime("%Y-%m-%d")
     market_data = utils.fill_missing_dates(market_data, start_date=start_date, end_date=end_date)
 
     return market_data
 
 
 if __name__ == "__main__":
-    utils.print_list(fondofonte("comparto-dinamico", "2023-10-19"))
+    utils.print_list(fondofonte("comparto-dinamico", start_date="2023-10-19"))

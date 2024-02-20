@@ -2,6 +2,17 @@
 
 Ghostfolio-feeder extends the functionality of Ghostfolio by automatically adding data via internal APIs. The sources of the data are taken by scraping financial websites.
 
+## Supported sources
+
+| data_source      | Description                       |
+|------------------|-----------------------------------|
+| boerse_frankfurt | Frankfurt Stock Exchange          |
+| byblos           | Italian pension fund              |
+| corriere         | Italian finance site              |
+| fondofonte       | Italian pension fund              |
+| mvis             | Crypto indices used by Bitpanda   |
+| local            | CSV and JSON files stored locally |
+
 ## Configuration
 
 The configurations can be found in the path `app/data/` and are structured in the following format:

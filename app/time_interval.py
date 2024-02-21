@@ -26,5 +26,5 @@ def crontab_sleep(cron_expression):
 
 
 if __name__ == "__main__":
-    next_cycle_sleep = crontab_sleep("*/30 * * * *")
+    next_cycle_sleep = crontab_sleep("00 * * * *")
     print(f"Seconds to sleep: {next_cycle_sleep}")

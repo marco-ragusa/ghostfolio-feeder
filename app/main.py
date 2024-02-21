@@ -32,7 +32,7 @@ def loop(host: str, access_token: str, crontab: str) -> None:
 def main():
     host = getenv('HOST', 'https://example.com')
     access_token = getenv('ACCESS_TOKEN', 'your_access_token')
-    crontab = getenv("CRONTAB", '*/30 * * * *')
+    crontab = getenv("CRONTAB", '00 * * * *')
     loop(host, access_token, crontab)
 
 

@@ -1,13 +1,30 @@
-from datetime import datetime, timedelta
+from datetime import datetime
+from croniter import croniter
 
 
-def seconds_until_next_interval(interval_minutes: int) -> int:
-    # Get the current time
-    current_time = datetime.now()
+def crontab_sleep(cron_expression):
+    """
+    Function that calculates the number of seconds to sleep to get to the next loop cycle.
 
-    # Calculate the time remaining until the next specified interval
-    next_interval = current_time.replace(second=0, microsecond=0) + timedelta(
-        minutes=(interval_minutes - current_time.minute % interval_minutes)
-    )
+    Args:
+        cron_expression: String representing the cron expression.
 
-    return (next_interval - current_time).seconds
+    Returns:
+        Integer representing the number of seconds to sleep.
+    """
+
+    # Create a croniter object from the cron expression.
+    cron = croniter(cron_expression)
+
+    # Get the timestamp time of the next loop cycle.
+    next_cycle = cron.get_next()
+
+    # Calculate the difference in seconds between the current time and the next cycle.
+    seconds_difference = next_cycle - datetime.now().timestamp()
+
+    return int(seconds_difference)
+
+
+if __name__ == "__main__":
+    next_cycle_sleep = crontab_sleep("*/30 * * * *")
+    print(f"Seconds to sleep: {next_cycle_sleep}")

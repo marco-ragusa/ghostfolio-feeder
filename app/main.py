@@ -2,10 +2,10 @@ import json
 from os import path, getenv
 from time import sleep
 from ghostfolio_feeder import ghostfolio_feeder
-from time_interval import seconds_until_next_interval
+from time_interval import crontab_sleep
 
 
-def loop(host: str, access_token: str, interval_minutes: int) -> None:
+def loop(host: str, access_token: str, crontab: str) -> None:
     json_file_path = path.join(path.dirname(__file__), 'data', 'profiles.json')
     while True:
         with open(json_file_path, 'r', encoding='UTF8') as file:
@@ -24,7 +24,7 @@ def loop(host: str, access_token: str, interval_minutes: int) -> None:
             except Exception as e:
                 print(f"ERROR: {e}")
 
-        seconds_next_interval = seconds_until_next_interval(interval_minutes)
+        seconds_next_interval = crontab_sleep(crontab)
         print(f"Wait {seconds_next_interval} seconds until the next loop")
         sleep(seconds_next_interval)
 
@@ -32,8 +32,8 @@ def loop(host: str, access_token: str, interval_minutes: int) -> None:
 def main():
     host = getenv('HOST', 'https://example.com')
     access_token = getenv('ACCESS_TOKEN', 'your_access_token')
-    interval_minutes = int(getenv("INTERVAL_MINUTES", '30'))
-    loop(host, access_token, interval_minutes)
+    crontab = getenv("CRONTAB", '*/30 * * * *')
+    loop(host, access_token, crontab)
 
 
 if __name__ == "__main__":

@@ -83,7 +83,7 @@
         },
         "data_source": {
             "name": "local",
-            "ticker": "example.csv",
+            "ticker": "data/local/example.csv",
             "start_date": "2020-01-01"
         }
     },
@@ -100,7 +100,7 @@
         },
         "data_source": {
             "name": "local",
-            "ticker": "example.json",
+            "ticker": "data/local/example.json",
             "start_date": "2020-01-01"
         }
     }

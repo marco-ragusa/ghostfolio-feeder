@@ -25,7 +25,7 @@ def local(ticker: str, start_date: str | None = None, end_date: str | None = Non
     """
 
     # Define the file path
-    file_path = f"app/data/local/{ticker}"
+    file_path = ticker
 
     # Check if file ends with ".json" or ".csv".
     if not file_path.lower().endswith((".json", ".csv")):

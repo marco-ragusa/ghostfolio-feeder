@@ -13,14 +13,17 @@ def crontab_sleep(cron_expression):
         Integer representing the number of seconds to sleep.
     """
 
+    # Get the current date and time in local time zone
+    now = datetime.now().astimezone()
+
     # Create a croniter object from the cron expression.
-    cron = croniter(cron_expression)
+    cron = croniter(cron_expression, now)
 
     # Get the timestamp time of the next loop cycle.
     next_cycle = cron.get_next()
 
     # Calculate the difference in seconds between the current time and the next cycle.
-    seconds_difference = next_cycle - datetime.now().timestamp()
+    seconds_difference = next_cycle - now.timestamp()
 
     return int(seconds_difference)
 

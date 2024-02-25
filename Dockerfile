@@ -1,6 +1,9 @@
 # Use a base Python image
 FROM python:3.12-alpine
 
+# Install timezone package
+RUN apk add --no-cache tzdata
+
 # Improve container logging
 ENV PYTHONUNBUFFERED=1 \
     PYTHONIOENCODING=UTF-8

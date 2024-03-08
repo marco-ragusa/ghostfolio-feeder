@@ -25,6 +25,14 @@ def boerse_frankfurt(
 
     # Get market data
     base_url = 'https://api.boerse-frankfurt.de/v1/tradingview/lightweight/history/single'
+    query_params = {
+        'resolution': 'D',
+        'isKeepResolutionForLatestWeeksIfPossible': 'false',
+        'from': '0000000000',
+        'to': '9999999999',
+        'isBidAskPrice': 'false',
+        'symbols': ticker
+    }
     headers = {
         'User-Agent': utils.get_random_user_agent(),
         'Accept': 'application/json, text/plain, */*',
@@ -34,15 +42,12 @@ def boerse_frankfurt(
         'Sec-Fetch-Mode': 'cors',
         'Sec-Fetch-Site': 'same-site',
     }
-    query_params = {
-        'resolution': 'D',
-        'isKeepResolutionForLatestWeeksIfPossible': 'false',
-        'from': '0000000000',
-        'to': '9999999999',
-        'isBidAskPrice': 'false',
-        'symbols': ticker
-    }
-    response = requests.get(base_url, params=query_params, headers=headers, timeout=10)
+    response = requests.get(
+        base_url,
+        params=query_params,
+        headers=headers,
+        timeout=10
+    )
     market_data = response.json()[0]['quotes']['timeValuePairs']
 
     # Format market data in this way {'date': 'yyyy-mm-dd', 'marketPrice': int}

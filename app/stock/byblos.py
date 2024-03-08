@@ -21,25 +21,24 @@ def byblos(ticker: str, start_date: str | None = None, end_date: str | None = No
     """
 
     # Get market data
+    base_url = 'https://www.fondobyblos.it/grafici/tabella.php'
+    query_params = {
+        'c': ticker,
+        'lang': 'it',
+    }
     headers = {
         'User-Agent': utils.get_random_user_agent(),
         'Accept': 'application/json, text/javascript, */*; q=0.01',
         'Accept-Language': 'it-IT,it;q=0.8,en-US;q=0.5,en;q=0.3',
         'X-Requested-With': 'XMLHttpRequest',
-        'DNT': '1',
-        'Connection': 'keep-alive',
         'Referer': 'https://www.fondobyblos.it',
         'Sec-Fetch-Dest': 'empty',
         'Sec-Fetch-Mode': 'cors',
         'Sec-Fetch-Site': 'same-origin',
     }
-    params = {
-        'c': ticker,
-        'lang': 'it',
-    }
     response = requests.get(
-        'https://www.fondobyblos.it/grafici/tabella.php',
-        params=params,
+        base_url,
+        params=query_params,
         headers=headers,
         timeout=10,
     )

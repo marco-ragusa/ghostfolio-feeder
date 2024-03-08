@@ -21,6 +21,11 @@ def corriere(ticker: str, start_date: str | None = None, end_date: str | None = 
     """
 
     # Get market data
+    base_url = f'https://borsa.corriere.it/api/TimeSeries/{ticker}'
+    query_params = {
+        'seriesType': 'Daily',
+        # 'startTimepoint': '06^%^2F13^%^2F2023'
+    }
     headers = {
         'User-Agent': utils.get_random_user_agent(),
         'X-Requested-With': 'XMLHttpRequest',
@@ -29,13 +34,9 @@ def corriere(ticker: str, start_date: str | None = None, end_date: str | None = 
         'Sec-Fetch-Mode': 'cors',
         'Sec-Fetch-Site': 'same-origin',
     }
-    params = {
-        'seriesType': 'Daily',
-        # 'startTimepoint': '06^%^2F13^%^2F2023'
-    }
     response = requests.get(
-        f'https://borsa.corriere.it/api/TimeSeries/{ticker}',
-        params=params,
+        base_url,
+        params=query_params,
         headers=headers,
         timeout=10,
     )

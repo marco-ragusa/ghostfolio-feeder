@@ -22,6 +22,7 @@ def mvis(ticker: str, start_date: str | None = None, end_date: str | None = None
     """
 
     # Get market data
+    base_url = 'https://wzszugyhvjh3bo4rqefrhsswdm.appsync-api.eu-central-1.amazonaws.com/graphql'
     headers = {
         'User-Agent': utils.get_random_user_agent(),
         'Content-Type': 'application/json; charset=UTF-8',
@@ -49,7 +50,7 @@ def mvis(ticker: str, start_date: str | None = None, end_date: str | None = None
         },
     }
     response = requests.post(
-        'https://wzszugyhvjh3bo4rqefrhsswdm.appsync-api.eu-central-1.amazonaws.com/graphql',
+        base_url,
         headers=headers,
         json=json,
         timeout=10,

@@ -22,10 +22,10 @@ def fondofonte(ticker: str, start_date: str | None = None, end_date: str | None 
     """
 
     # Get web page
+    base_url = f'https://www.fondofonte.it/gestione-finanziaria/i-valori-quota-dei-comparti/{ticker}/'
     headers = {
         'User-Agent': utils.get_random_user_agent(),
-        'Referer': \
-            f'https://www.fondofonte.it/gestione-finanziaria/i-valori-quota-dei-comparti/{ticker}/',
+        'Referer': base_url,
         'Sec-Fetch-Dest': 'document',
         'Sec-Fetch-Mode': 'navigate',
         'Sec-Fetch-Site': 'same-origin',
@@ -33,7 +33,7 @@ def fondofonte(ticker: str, start_date: str | None = None, end_date: str | None 
     }
     # Make an HTTP request and get the content of the page
     response = requests.get(
-        f"https://www.fondofonte.it/gestione-finanziaria/i-valori-quota-dei-comparti/{ticker}/",
+        base_url,
         headers=headers,
         timeout=10,
     )

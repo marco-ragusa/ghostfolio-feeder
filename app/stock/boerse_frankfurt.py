@@ -27,7 +27,7 @@ def boerse_frankfurt(
     base_url = 'https://api.boerse-frankfurt.de/v1/tradingview/lightweight/history/single'
     query_params = {
         'resolution': 'D',
-        'isKeepResolutionForLatestWeeksIfPossible': 'false',
+        'isKeepResolutionForLatestWeeksIfPossible': 'true',
         'from': '0000000000',
         'to': '9999999999',
         'isBidAskPrice': 'false',

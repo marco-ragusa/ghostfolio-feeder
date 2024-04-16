@@ -6,12 +6,12 @@ from .fondofonte import fondofonte
 from .local import local
 
 
-class Stock:
+class Market:
     """
-    Represents a stock and provides methods to fetch data from different sources.
+    Represents the market and provides methods to fetch data from different sources.
 
     Attributes:
-        ticker (str): The ticker symbol of the stock.
+        ticker (str): The ticker symbol of the asset.
         start_date (str): The start date for fetching data (optional).
         end_date (str): The end date for fetching data (optional).
     """
@@ -27,35 +27,35 @@ class Stock:
 
 
     def mvis(self) -> list:
-        """Fetches stock data from MVIS."""
+        """Fetches market data from MVIS."""
         return mvis(self.ticker, self.start_date, self.end_date)
 
     def corriere(self) -> list:
-        """Fetches stock data from Corriere."""
+        """Fetches market data from Corriere."""
         return corriere(self.ticker, self.start_date, self.end_date)
 
     def byblos(self) -> list:
-        """Fetches stock data from Byblos."""
+        """Fetches market data from Byblos."""
         return byblos(self.ticker, self.start_date, self.end_date)
 
     def boerse_frankfurt(self) -> list:
-        """Fetches stock data from Börse Frankfurt."""
+        """Fetches market data from Börse Frankfurt."""
         return boerse_frankfurt(self.ticker, self.start_date, self.end_date)
 
     def fondofonte(self) -> list:
-        """Fetches stock data from Fondofonte."""
+        """Fetches market data from Fondofonte."""
         return fondofonte(self.ticker, self.start_date, self.end_date)
 
     def local(self) -> list:
-        """Fetches stock data from local source."""
+        """Fetches market data from local source."""
         return local(self.ticker, self.start_date, self.end_date)
 
 
 data_source_mapping = {
-    "mvis": Stock.mvis,
-    "corriere": Stock.corriere,
-    "byblos": Stock.byblos,
-    "boerse_frankfurt": Stock.boerse_frankfurt,
-    "fondofonte": Stock.fondofonte,
-    "local": Stock.local,
+    "mvis": Market.mvis,
+    "corriere": Market.corriere,
+    "byblos": Market.byblos,
+    "boerse_frankfurt": Market.boerse_frankfurt,
+    "fondofonte": Market.fondofonte,
+    "local": Market.local,
 }

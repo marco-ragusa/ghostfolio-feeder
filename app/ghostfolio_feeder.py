@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 from ghostfolio import Ghostfolio
-from stock import Stock, data_source_mapping
+from market import Market, data_source_mapping
 
 
 def subtract_days_from_date(input_date: str, days_to_subtract: int = 0) -> str:
@@ -15,11 +15,11 @@ def subtract_days_from_date(input_date: str, days_to_subtract: int = 0) -> str:
 
 
 def get_market_data(data_source: dict) -> dict:
-    # Create an instance of the Stock class with the specified ticker and start date
-    stock_instance = Stock(ticker=data_source['ticker'], start_date=data_source['start_date'])
+    # Create an instance of the Market class with the specified ticker and start date
+    market_instance = Market(ticker=data_source['ticker'], start_date=data_source['start_date'])
 
-    # Call the appropriate method from the data_source_mapping using the stock_instance
-    market_data = data_source_mapping[data_source['name']](stock_instance)
+    # Call the appropriate method from the data_source_mapping using the market_instance
+    market_data = data_source_mapping[data_source['name']](market_instance)
 
     return {
         # 'marketData': [{"marketPrice":666.00,"date":"2024-01-01T00:00:00.000Z"}],

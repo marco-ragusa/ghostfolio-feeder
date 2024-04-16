@@ -1,7 +1,7 @@
 import requests
 # Import utils
 try:
-    from stock import utils
+    from market import utils
 except ImportError:
     import utils
 

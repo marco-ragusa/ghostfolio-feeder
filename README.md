@@ -10,6 +10,7 @@ Ghostfolio-feeder extends the functionality of Ghostfolio by automatically addin
 | byblos           | Italian pension fund              |
 | corriere         | Italian finance site              |
 | fondofonte       | Italian pension fund              |
+| mediafond        | Italian pension fund              |
 | mvis             | Crypto indices used by Bitpanda   |
 | local            | CSV and JSON files stored locally |
 

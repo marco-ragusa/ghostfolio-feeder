@@ -7,10 +7,11 @@ Ghostfolio-feeder extends the functionality of Ghostfolio by automatically addin
 | data_source      | Description                       |
 |------------------|-----------------------------------|
 | boerse_frankfurt | Frankfurt Stock Exchange          |
-| byblos           | Italian pension fund              |
 | corriere         | Italian finance site              |
+| byblos           | Italian pension fund              |
 | fondofonte       | Italian pension fund              |
 | mediafond        | Italian pension fund              |
+| previcoop        | Italian pension fund              |
 | mvis             | Crypto indices used by Bitpanda   |
 | local            | CSV and JSON files stored locally |
 

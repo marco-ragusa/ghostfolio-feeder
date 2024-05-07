@@ -88,6 +88,23 @@
         }
     },
     {
+        "symbol": "PREVICOOP-DIN",
+        "profile_data": {
+            "assetClass": "EQUITY",
+            "assetSubClass": "MUTUALFUND",
+            "comment": "",
+            "currency": "EUR",
+            "name": "Previdenza Cooperativa Comparto Dinamico",
+            "scraperConfiguration": {},
+            "symbolMapping": {}
+        },
+        "data_source": {
+            "name": "previcoop",
+            "ticker": "comparto-dinamico",
+            "start_date": "2019-01-01"
+        }
+    },
+    {
         "symbol": "CSV-LOCAL-EXAMPLE",
         "profile_data": {
             "assetClass": "EQUITY",

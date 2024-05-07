@@ -71,6 +71,23 @@
         }
     },
     {
+        "symbol": "MEDIAFOND-DIN",
+        "profile_data": {
+            "assetClass": "EQUITY",
+            "assetSubClass": "MUTUALFUND",
+            "comment": "",
+            "currency": "EUR",
+            "name": "MEDIAFOND Profilo Dinamico",
+            "scraperConfiguration": {},
+            "symbolMapping": {}
+        },
+        "data_source": {
+            "name": "mediafond",
+            "ticker": "224",
+            "start_date": "2010-01-01"
+        }
+    },
+    {
         "symbol": "CSV-LOCAL-EXAMPLE",
         "profile_data": {
             "assetClass": "EQUITY",

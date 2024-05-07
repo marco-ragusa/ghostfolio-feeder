@@ -3,6 +3,7 @@ from .corriere import corriere
 from .byblos import byblos
 from .boerse_frankfurt import boerse_frankfurt
 from .fondofonte import fondofonte
+from .mediafond import mediafond
 from .local import local
 
 
@@ -46,6 +47,10 @@ class Market:
         """Fetches market data from Fondofonte."""
         return fondofonte(self.ticker, self.start_date, self.end_date)
 
+    def mediafond(self) -> list:
+        """Fetches market data from MEDIAFOND."""
+        return mediafond(self.ticker, self.start_date, self.end_date)
+
     def local(self) -> list:
         """Fetches market data from local source."""
         return local(self.ticker, self.start_date, self.end_date)
@@ -57,5 +62,6 @@ data_source_mapping = {
     "byblos": Market.byblos,
     "boerse_frankfurt": Market.boerse_frankfurt,
     "fondofonte": Market.fondofonte,
+    "mediafond": Market.mediafond,
     "local": Market.local,
 }

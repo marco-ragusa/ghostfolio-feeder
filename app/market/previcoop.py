@@ -1,5 +1,4 @@
 """Previdenza Cooperativa module."""
-
 from bs4 import BeautifulSoup
 import requests
 # Import utils
@@ -7,6 +6,40 @@ try:
     from market import utils
 except ImportError:
     import utils
+
+
+def previcoop_scraper(html: str) -> list:
+    """
+    Scrape market data from HTML content obtained from Previdenza Cooperativa webpage.
+
+    Args:
+        html (str): The HTML content of the webpage.
+
+    Returns:
+        list: A list of dictionaries containing market data in the following format:
+            [{'date': 'yyyy-mm-dd', 'marketPrice': str}]
+    """
+    # Create a dictionary to store the information
+    market_data = []
+
+    # Parse the HTML content
+    soup = BeautifulSoup(html, 'html.parser')
+
+    # Find the table body
+    table_body = soup.find('table', {'id': 'table_4'}).find('tbody')
+
+    # Extract data from the table
+    for row in table_body.find_all('tr'):
+        cells = row.find_all('td')
+        # Check if the row contains exactly 3 cells (date, market price, patrimonio)
+        if len(cells) == 3:
+            # Extracting date and market price from the cells
+            date = cells[0].text.strip()
+            market_price = cells[1].text.strip()
+            # Append the extracted data to the list
+            market_data.append({'date': date, 'marketPrice': market_price})
+
+    return market_data
 
 
 def previcoop(
@@ -22,14 +55,13 @@ def previcoop(
 
     Returns:
         list: A list of dictionaries containing historical market data in the following format:
-            {'date': 'yyyy-mm-dd', 'marketPrice': int}
+            {'date': 'yyyy-mm-dd', 'marketPrice': float}
     """
-
     # Get web page
-    base_url = f'https://www.previdenzacooperativa.it/{ticker}/'
+    url = f'https://www.previdenzacooperativa.it/{ticker}/'
     headers = {
         'User-Agent': utils.get_random_user_agent(),
-        'Referer': base_url,
+        'Referer': url,
         'Sec-Fetch-Dest': 'document',
         'Sec-Fetch-Mode': 'navigate',
         'Sec-Fetch-Site': 'same-origin',
@@ -37,29 +69,14 @@ def previcoop(
     }
     # Make an HTTP request and get the content of the page
     response = requests.get(
-        base_url,
+        url,
         headers=headers,
         timeout=10,
     )
     html = response.text
 
-    # Parse the HTML content
-    soup = BeautifulSoup(html, 'html.parser')
-
-    # Find the table body
-    table_body = soup.find('table', {'id': 'table_4'}).find('tbody')
-
-    # Extract data from the table
-    market_data = []
-    for row in table_body.find_all('tr'):
-        cells = row.find_all('td')
-        # Check if the row contains exactly 3 cells (date, market price, patrimonio)
-        if len(cells) == 3:
-            # Extracting date and market price from the cells
-            date = cells[0].text.strip()
-            market_price = cells[1].text.strip()
-            # Append the extracted data to the list
-            market_data.append({'date': date, 'marketPrice': market_price})
+    # Extract market data from webpage
+    market_data = previcoop_scraper(html)
 
     # Format market data in this way {'date': 'yyyy-mm-dd', 'marketPrice': int}
     market_data = [{

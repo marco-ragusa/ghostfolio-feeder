@@ -1,3 +1,4 @@
+"""Local module."""
 import csv
 import json
 # Import utils
@@ -18,12 +19,11 @@ def local(ticker: str, start_date: str | None = None, end_date: str | None = Non
 
     Returns:
         list: A list of dictionaries containing historical market data in the following format:
-            {'date': 'yyyy-mm-dd', 'marketPrice': int}
+            {'date': 'yyyy-mm-dd', 'marketPrice': float}
 
     Raises:
         ValueError: If the file format is not supported. Only JSON or CSV files are supported.
     """
-
     # Define the file path
     file_path = ticker
 
@@ -47,5 +47,10 @@ def local(ticker: str, start_date: str | None = None, end_date: str | None = Non
     return market_data
 
 
+def main() -> None:
+    """Main function for local tests only."""
+    utils.print_list(local("app/data/local/example.json", start_date="2019-01-01"))
+
+
 if __name__ == "__main__":
-    utils.print_list(local("example.csv", start_date="2019-01-01"))
+    main()

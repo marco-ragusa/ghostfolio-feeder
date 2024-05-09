@@ -1,8 +1,9 @@
+"""Utils module."""
 import random
 from datetime import datetime, timedelta
 
 
-def convert_italian_date(date_str):
+def convert_italian_date(date_str) -> str:
     """
     Convert a date string in Italian format to 'yyyy-mm-dd' format.
 
@@ -12,7 +13,6 @@ def convert_italian_date(date_str):
     Returns:
         str: The date string in 'yyyy-mm-dd' format, or None if the month is invalid.
     """
-
     # List of Italian month abbreviations
     italian_months = [
         'Gen', 'Feb', 'Mar', 'Apr', 'Mag', 'Giu', 'Lug', 'Ago', 'Set', 'Ott', 'Nov', 'Dic'
@@ -55,7 +55,6 @@ def fill_missing_dates(
     Returns:
         A new list of dictionaries with all dates filled in.
     """
-
     # Add end_date if missing with current date
     end_date = end_date or datetime.today().strftime("%Y-%m-%d")
 
@@ -103,7 +102,7 @@ def fill_missing_dates(
     return filled_data_list
 
 
-def remove_duplicates(data_list):
+def remove_duplicates(data_list) -> list:
     """
     Removes duplicate entries from a list of dictionaries based on the "date" key.
 
@@ -113,7 +112,6 @@ def remove_duplicates(data_list):
     Returns:
         A new list of dictionaries with the duplicate entries removed.
     """
-
     date_seen = set()
     unique_data_list = []
 
@@ -147,14 +145,13 @@ def generate_missing_dates(start_date, end_date):
         current_date += timedelta(days=1)
 
 
-def print_list(market_price: list) -> list:
+def print_list(market_price: list) -> None:
     """
     Prints a concise representation of a list of market prices.
 
     Args:
         marketPrice (list): A list of numerical market prices.
     """
-
     for price in market_price[:5] + ["..."] + market_price[-5:]:
         print(price)
 
@@ -166,7 +163,6 @@ def get_random_user_agent() -> str:
     Returns:
         str: A random user agent string from the predefined list.
     """
-
     user_agents = [
         "Mozilla/5.0 (Windows NT 10.0; Win64; x64)" \
             + " AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.3",

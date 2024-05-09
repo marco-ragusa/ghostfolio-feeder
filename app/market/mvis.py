@@ -1,3 +1,4 @@
+"""MarketVector module."""
 from datetime import datetime
 import requests
 # Import utils
@@ -18,11 +19,10 @@ def mvis(ticker: str, start_date: str | None = None, end_date: str | None = None
 
     Returns:
         list: A list of dictionaries containing historical market data in the following format:
-            {'date': 'yyyy-mm-dd', 'marketPrice': int}
+            {'date': 'yyyy-mm-dd', 'marketPrice': float}
     """
-
     # Get market data
-    base_url = 'https://wzszugyhvjh3bo4rqefrhsswdm.appsync-api.eu-central-1.amazonaws.com/graphql'
+    url = 'https://wzszugyhvjh3bo4rqefrhsswdm.appsync-api.eu-central-1.amazonaws.com/graphql'
     headers = {
         'User-Agent': utils.get_random_user_agent(),
         'Content-Type': 'application/json; charset=UTF-8',
@@ -50,14 +50,14 @@ def mvis(ticker: str, start_date: str | None = None, end_date: str | None = None
         },
     }
     response = requests.post(
-        base_url,
+        url,
         headers=headers,
         json=json,
         timeout=10,
     )
     market_data = response.json()['data']['ticker1']
 
-    # Format market data in this way {'date': 'yyyy-mm-dd', 'marketPrice': int}
+    # Format market data in this way {'date': 'yyyy-mm-dd', 'marketPrice': float}
     market_data = [{
         "marketPrice": item["y"],
         "date": datetime.fromtimestamp(
@@ -71,5 +71,10 @@ def mvis(ticker: str, start_date: str | None = None, end_date: str | None = None
     return market_data
 
 
-if __name__ == "__main__":
+def main() -> None:
+    """Main function for local tests only."""
     utils.print_list(mvis("MVDA5", start_date="2000-01-01"))
+
+
+if __name__ == "__main__":
+    main()

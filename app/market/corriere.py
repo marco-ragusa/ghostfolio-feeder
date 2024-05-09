@@ -1,3 +1,4 @@
+"""Corriere module."""
 import requests
 # Import utils
 try:
@@ -17,11 +18,10 @@ def corriere(ticker: str, start_date: str | None = None, end_date: str | None = 
 
     Returns:
         list: A list of dictionaries containing historical market data in the following format:
-            {'date': 'yyyy-mm-dd', 'marketPrice': int}
+            {'date': 'yyyy-mm-dd', 'marketPrice': float}
     """
-
     # Get market data
-    base_url = f'https://borsa.corriere.it/api/TimeSeries/{ticker}'
+    url = f'https://borsa.corriere.it/api/TimeSeries/{ticker}'
     query_params = {
         'seriesType': 'Daily',
         # 'startTimepoint': '06^%^2F13^%^2F2023'
@@ -35,14 +35,14 @@ def corriere(ticker: str, start_date: str | None = None, end_date: str | None = 
         'Sec-Fetch-Site': 'same-origin',
     }
     response = requests.get(
-        base_url,
+        url,
         params=query_params,
         headers=headers,
         timeout=10,
     )
     market_data = response.json()['series']
 
-    # Format market data in this way {'date': 'yyyy-mm-dd', 'marketPrice': int}
+    # Format market data in this way {'date': 'yyyy-mm-dd', 'marketPrice': float}
     market_data = [{
         "marketPrice": item["close"],
         "date": item["timestamp"].split('T')[0]
@@ -54,5 +54,10 @@ def corriere(ticker: str, start_date: str | None = None, end_date: str | None = 
     return market_data
 
 
-if __name__ == "__main__":
+def main() -> None:
+    """Main function for local tests only."""
     utils.print_list(corriere("PEX0ALPFRA12.EUR", start_date="2000-01-01"))
+
+
+if __name__ == "__main__":
+    main()

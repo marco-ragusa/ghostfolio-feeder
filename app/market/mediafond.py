@@ -1,5 +1,4 @@
 """MEDIAFOND module."""
-
 import requests
 # Import utils
 try:
@@ -19,11 +18,10 @@ def mediafond(ticker: str, start_date: str | None = None, end_date: str | None =
 
     Returns:
         list: A list of dictionaries containing historical market data in the following format:
-            {'date': 'yyyy-mm-dd', 'marketPrice': int}
+            {'date': 'yyyy-mm-dd', 'marketPrice': float}
     """
-
     # Get market data
-    base_url = f'https://www.mediafond.it/grafici/tabella.php?c={ticker}'
+    url = f'https://www.mediafond.it/grafici/tabella.php?c={ticker}'
     headers = {
         'User-Agent': utils.get_random_user_agent(),
         'Accept': 'application/json, text/javascript, */*; q=0.01',
@@ -35,13 +33,13 @@ def mediafond(ticker: str, start_date: str | None = None, end_date: str | None =
         'Sec-Fetch-Site': 'same-origin',
     }
     response = requests.get(
-        base_url,
+        url,
         headers=headers,
         timeout=10,
     )
     market_data = response.json()
 
-    # Format market data in this way {'date': 'yyyy-mm-dd', 'marketPrice': int}
+    # Format market data in this way {'date': 'yyyy-mm-dd', 'marketPrice': float}
     market_data = [{
         "marketPrice": float(item["valore"].replace(',','.')),
         "date": utils.convert_italian_date(item["data"])
@@ -53,7 +51,7 @@ def mediafond(ticker: str, start_date: str | None = None, end_date: str | None =
     return market_data
 
 
-def main():
+def main() -> None:
     """Main function for local tests only."""
     utils.print_list(mediafond("224", "2000-01-01"))
 

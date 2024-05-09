@@ -100,7 +100,7 @@ def fondofonte(ticker: str, start_date: str | None = None, end_date: str | None 
     return market_data
 
 
-def main():
+def main() -> None:
     """Main function for local tests only."""
     utils.print_list(fondofonte("comparto-dinamico", start_date="2023-10-19"))
 

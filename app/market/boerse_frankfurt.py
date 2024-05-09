@@ -1,3 +1,4 @@
+"""Boerse Frankfurt module."""
 from datetime import datetime
 import requests
 # Import utils
@@ -20,11 +21,10 @@ def boerse_frankfurt(
 
     Returns:
         list: A list of dictionaries containing historical market data in the following format:
-            {'date': 'yyyy-mm-dd', 'marketPrice': int}
+            {'date': 'yyyy-mm-dd', 'marketPrice': float}
     """
-
     # Get market data
-    base_url = 'https://api.boerse-frankfurt.de/v1/tradingview/lightweight/history/single'
+    url = 'https://api.boerse-frankfurt.de/v1/tradingview/lightweight/history/single'
     query_params = {
         'resolution': 'D',
         'isKeepResolutionForLatestWeeksIfPossible': 'true',
@@ -43,14 +43,14 @@ def boerse_frankfurt(
         'Sec-Fetch-Site': 'same-site',
     }
     response = requests.get(
-        base_url,
+        url,
         params=query_params,
         headers=headers,
         timeout=10
     )
     market_data = response.json()[0]['quotes']['timeValuePairs']
 
-    # Format market data in this way {'date': 'yyyy-mm-dd', 'marketPrice': int}
+    # Format market data in this way {'date': 'yyyy-mm-dd', 'marketPrice': float}
     market_data = [{
         "marketPrice": item["value"],
         "date": datetime.fromtimestamp(
@@ -64,5 +64,10 @@ def boerse_frankfurt(
     return market_data
 
 
-if __name__ == "__main__":
+def main() -> None:
+    """Main function for local tests only."""
     utils.print_list(boerse_frankfurt("XETR:CH1199067674", start_date="2022-07-31"))
+
+
+if __name__ == "__main__":
+    main()

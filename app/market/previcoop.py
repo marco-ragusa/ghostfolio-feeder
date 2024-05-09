@@ -90,7 +90,7 @@ def previcoop(
     return market_data
 
 
-def main():
+def main() -> None:
     """Main function for local tests only."""
     utils.print_list(previcoop("comparto-dinamico", "2019-01-01"))
 

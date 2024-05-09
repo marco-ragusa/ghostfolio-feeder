@@ -1,3 +1,4 @@
+"""Byblos module."""
 import requests
 # Import utils
 try:
@@ -17,11 +18,10 @@ def byblos(ticker: str, start_date: str | None = None, end_date: str | None = No
 
     Returns:
         list: A list of dictionaries containing historical market data in the following format:
-            {'date': 'yyyy-mm-dd', 'marketPrice': int}
+            {'date': 'yyyy-mm-dd', 'marketPrice': float}
     """
-
     # Get market data
-    base_url = 'https://www.fondobyblos.it/grafici/tabella.php'
+    url = 'https://www.fondobyblos.it/grafici/tabella.php'
     query_params = {
         'c': ticker,
         'lang': 'it',
@@ -37,14 +37,14 @@ def byblos(ticker: str, start_date: str | None = None, end_date: str | None = No
         'Sec-Fetch-Site': 'same-origin',
     }
     response = requests.get(
-        base_url,
+        url,
         params=query_params,
         headers=headers,
         timeout=10,
     )
     market_data = response.json()
 
-    # Format market data in this way {'date': 'yyyy-mm-dd', 'marketPrice': int}
+    # Format market data in this way {'date': 'yyyy-mm-dd', 'marketPrice': float}
     market_data = [{
         "marketPrice": float(item["valore"].replace(',','.')),
         "date": utils.convert_italian_date(item["data"])
@@ -56,5 +56,10 @@ def byblos(ticker: str, start_date: str | None = None, end_date: str | None = No
     return market_data
 
 
-if __name__ == "__main__":
+def main() -> None:
+    """Main function for local tests only."""
     utils.print_list(byblos("211", "2000-01-01"))
+
+
+if __name__ == "__main__":
+    main()

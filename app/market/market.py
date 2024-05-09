@@ -1,3 +1,4 @@
+"""Market module."""
 from .mvis import mvis
 from .corriere import corriere
 from .byblos import byblos
@@ -17,7 +18,6 @@ class Market:
         start_date (str): The start date for fetching data (optional).
         end_date (str): The end date for fetching data (optional).
     """
-
     def __init__(
             self, ticker: str, start_date: str | None = None, end_date: str | None = None
         ) -> None:

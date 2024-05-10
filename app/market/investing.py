@@ -1,5 +1,6 @@
 """Investing module."""
 from datetime import datetime
+import json
 import time
 import requests
 # Import utils
@@ -7,6 +8,23 @@ try:
     from market import utils
 except ImportError:
     import utils
+
+
+def is_json(string):
+    """
+    Check if a string can be parsed as JSON.
+
+    Parameters:
+    string (str): The string to be checked.
+
+    Returns:
+    bool: True if the string can be parsed as JSON, False otherwise.
+    """
+    try:
+        json.loads(string)
+    except ValueError:
+        return False
+    return True
 
 
 def fetch_data_with_retry(url, params=None, headers=None, key=None, retry_count=5) -> any:
@@ -36,7 +54,7 @@ def fetch_data_with_retry(url, params=None, headers=None, key=None, retry_count=
             timeout=10,
         )
         # Check if retry is needed
-        if "Just a moment..." in response.text:
+        if not is_json(response.text):
             time.sleep(1)
             retry_count -= 1 # Decrement the retry count
         else:

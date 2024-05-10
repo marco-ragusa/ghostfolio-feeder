@@ -46,7 +46,9 @@ def fetch_data_with_retry(url, params=None, headers=None, key=None, retry_count=
     """
     data = ""
 
-    while retry_count > 0:
+    count = retry_count
+
+    while count > 0:
         response = requests.get(
             url,
             params=params,
@@ -56,12 +58,12 @@ def fetch_data_with_retry(url, params=None, headers=None, key=None, retry_count=
         # Check if retry is needed
         if not is_json(response.text):
             time.sleep(1)
-            retry_count -= 1 # Decrement the retry count
+            count -= 1 # Decrement the retry count
         else:
             data = response.json()[key]
             break
 
-    if retry_count == 0 and data == "":
+    if count == 0 and data == "":
         raise ValueError(f"Error: Unable to get response after {retry_count} attempts.")
 
     return data

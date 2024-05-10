@@ -6,6 +6,7 @@ from .boerse_frankfurt import boerse_frankfurt
 from .fondofonte import fondofonte
 from .mediafond import mediafond
 from .previcoop import previcoop
+from .investing import investing
 from .local import local
 
 
@@ -56,6 +57,10 @@ class Market:
         """Fetches market data from Previdenza Cooperativa."""
         return previcoop(self.ticker, self.start_date, self.end_date)
 
+    def investing(self) -> list:
+        """Fetches market data from Investing."""
+        return investing(self.ticker, self.start_date, self.end_date)
+
     def local(self) -> list:
         """Fetches market data from local source."""
         return local(self.ticker, self.start_date, self.end_date)
@@ -69,5 +74,6 @@ data_source_mapping = {
     "fondofonte": Market.fondofonte,
     "mediafond": Market.mediafond,
     "previcoop": Market.previcoop,
+    "investing": Market.investing,
     "local": Market.local,
 }

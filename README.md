@@ -6,6 +6,7 @@ Ghostfolio-feeder extends the functionality of Ghostfolio by automatically addin
 
 | data_source      | Description                       |
 |------------------|-----------------------------------|
+| investing        | Investing.com                     |
 | boerse_frankfurt | Frankfurt Stock Exchange          |
 | corriere         | Italian finance site              |
 | byblos           | Italian pension fund              |
@@ -21,6 +22,28 @@ The configurations can be found in the path `app/data/` and are structured in th
 
 ```json
 [
+    {
+        "symbol": "SPY",
+        "profile_data": {
+            "assetClass": "EQUITY",
+            "assetSubClass": "ETF",
+            "comment": "",
+            "currency": "USD",
+            "name": "SPDR® S&P 500",
+            "scraperConfiguration": {},
+            "symbolMapping": {}
+        },
+        "data_source": {
+            "name": "investing",
+            "ticker": {
+                "domain": "www",
+                "symbol": "spy",
+                "exchange": "nyse",
+                "retry": 5
+            },
+            "start_date": "2020-01-01"
+        }
+    },
     {
         "symbol": "21BC.DE",
         "profile_data": {

@@ -1,8 +1,9 @@
 # Use a base Python image
 FROM python:3.12-alpine
 
-# Install timezone package
-RUN apk add --no-cache tzdata
+# Install required package
+RUN apk update && \
+    apk add --no-cache tzdata curl
 
 # Improve container logging
 ENV PYTHONUNBUFFERED=1 \

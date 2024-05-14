@@ -2,7 +2,7 @@
 from datetime import datetime
 import json
 import time
-import requests
+import subprocess
 # Import utils
 try:
     from market import utils
@@ -48,19 +48,27 @@ def fetch_data_with_retry(url, params=None, headers=None, key=None, retry_count=
 
     count = retry_count
 
+    # Add params to url if exist
+    if params:
+        url += '?' + "&".join([f"{k}={v}" for k, v in params.items()])
+
+    # Construct curl command
+    curl_command = ['curl', '-X', 'GET', url]
+
+    # Add headers to the curl command
+    for k, v in headers.items():
+        curl_command.extend(['-H', f'{k}: {v}'])
+
     while count > 0:
-        response = requests.get(
-            url,
-            params=params,
-            headers=headers,
-            timeout=10,
-        )
+        # Execute curl command
+        response = subprocess.run(curl_command, capture_output=True, text=True, check=False).stdout
+
         # Check if retry is needed
-        if not is_json(response.text):
+        if not is_json(response):
             time.sleep(1)
             count -= 1 # Decrement the retry count
         else:
-            data = response.json()[key]
+            data = json.loads(response)[key]
             break
 
     if count == 0 and data == "":

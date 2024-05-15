@@ -27,6 +27,20 @@ def is_json(string):
     return True
 
 
+def execute_curl_command(curl_command: list) -> str:
+    """
+    Execute a curl command using subprocess.
+
+    Args:
+        curl_command (list): The curl command to be executed.
+
+    Returns:
+        str: The response from the command.
+    """
+    result = subprocess.run(curl_command, capture_output=True, text=True, check=False)
+    return result.stdout
+
+
 def fetch_data_with_retry(url, params=None, headers=None, key=None, retry_count=5) -> any:
     """
     Fetches data from a given URL with retry mechanism.
@@ -44,37 +58,23 @@ def fetch_data_with_retry(url, params=None, headers=None, key=None, retry_count=
     Raises:
         ValueError: If unable to get response after all retry attempts.
     """
-    data = ""
-
-    count = retry_count
-
-    # Add params to url if exist
     if params:
         url += '?' + "&".join([f"{k}={v}" for k, v in params.items()])
 
-    # Construct curl command
     curl_command = ['curl', '-X', 'GET', url]
 
-    # Add headers to the curl command
-    for k, v in headers.items():
-        curl_command.extend(['-H', f'{k}: {v}'])
+    if headers:
+        for k, v in headers.items():
+            curl_command.extend(['-H', f'{k}: {v}'])
 
-    while count > 0:
-        # Execute curl command
-        response = subprocess.run(curl_command, capture_output=True, text=True, check=False).stdout
+    for _ in range(retry_count):
+        response = execute_curl_command(curl_command)
+        if is_json(response):
+            data = json.loads(response)
+            return data.get(key) if key else data
+        time.sleep(1)
 
-        # Check if retry is needed
-        if not is_json(response):
-            time.sleep(1)
-            count -= 1 # Decrement the retry count
-        else:
-            data = json.loads(response)[key]
-            break
-
-    if count == 0 and data == "":
-        raise ValueError(f"Error: Unable to get response after {retry_count} attempts.")
-
-    return data
+    raise ValueError(f"Error: Unable to get response after {retry_count} attempts.")
 
 
 def get_symbol_id(ticker: dict) -> int:

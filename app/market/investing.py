@@ -114,11 +114,9 @@ def get_symbol_id(ticker: dict) -> int:
     )
 
     filtered_quotes = [
-        item for item in quotes if item['exchange'].lower() == ticker['exchange'].lower()
-    ]
-
-    filtered_quotes = [
-        item for item in filtered_quotes if item['symbol'].lower() == ticker['symbol'].lower()
+        item for item in quotes
+        if item.get('exchange').lower() == ticker.get('exchange').lower() and
+           item.get('symbol').lower() == ticker.get('symbol').lower()
     ]
 
     # Check if the filter was successful

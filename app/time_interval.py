@@ -1,3 +1,4 @@
+"""Time Interval module."""
 from datetime import datetime
 from croniter import croniter
 
@@ -28,6 +29,10 @@ def crontab_sleep(cron_expression):
     return int(seconds_difference)
 
 
-if __name__ == "__main__":
+def main():
+    """Main function for local tests only."""
     next_cycle_sleep = crontab_sleep("00 * * * *")
     print(f"Seconds to sleep: {next_cycle_sleep}")
+
+if __name__ == "__main__":
+    main()

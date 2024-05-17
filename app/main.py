@@ -1,3 +1,4 @@
+"""Ghostfolio Feeder main."""
 import json
 from os import path, getenv
 from time import sleep
@@ -6,6 +7,7 @@ from time_interval import crontab_sleep
 
 
 def loop(host: str, access_token: str, crontab: str) -> None:
+    """Ghostfolio Feeder loop."""
     json_file_path = path.join(path.dirname(__file__), 'data', 'profiles.json')
     while True:
         with open(json_file_path, 'r', encoding='UTF8') as file:
@@ -30,6 +32,7 @@ def loop(host: str, access_token: str, crontab: str) -> None:
 
 
 def main():
+    """Main function."""
     host = getenv('HOST', 'https://example.com')
     access_token = getenv('ACCESS_TOKEN', 'your_access_token')
     crontab = getenv("CRONTAB", '00 * * * *')

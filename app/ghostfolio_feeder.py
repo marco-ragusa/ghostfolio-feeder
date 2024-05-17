@@ -1,9 +1,19 @@
+"""Ghostfolio Feeder module."""
 from datetime import datetime, timedelta
 from ghostfolio import Ghostfolio
 from market import Market, data_source_mapping
 
 
 def subtract_days_from_date(input_date: str, days_to_subtract: int = 0) -> str:
+    """Subtract a specified number of days from the given date.
+
+    Args:
+        input_date (str): The input date in 'YYYY-MM-DD' format.
+        days_to_subtract (int, optional): The number of days to subtract. Defaults to 0.
+
+    Returns:
+        str: The new date as a string in 'YYYY-MM-DD' format.
+    """
     # Convert the date string to a datetime object
     input_date = datetime.strptime(input_date, '%Y-%m-%d')
 
@@ -15,6 +25,14 @@ def subtract_days_from_date(input_date: str, days_to_subtract: int = 0) -> str:
 
 
 def get_market_data(data_source: dict) -> dict:
+    """Retrieve market data for the specified data source.
+
+    Args:
+        data_source (dict): A dictionary containing data source details
+
+    Returns:
+        dict: A dictionary containing the market data.
+    """
     # Create an instance of the Market class with the specified ticker and start date
     market_instance = Market(ticker=data_source['ticker'], start_date=data_source['start_date'])
 
@@ -27,7 +45,18 @@ def get_market_data(data_source: dict) -> dict:
     }
 
 
-def ghostfolio_feeder(host: str, access_token: str, symbol: str, profile_data: dict, data_source: dict) -> None:
+def ghostfolio_feeder(
+        host: str, access_token: str, symbol: str, profile_data: dict, data_source: dict
+    ) -> None:
+    """Feed data into Ghostfolio by creating profiles and populating market data.
+
+    Args:
+        host (str): The Ghostfolio host URL.
+        access_token (str): The access token for authentication.
+        symbol (str): The symbol for which to manage data.
+        profile_data (dict): The profile data to set.
+        data_source (dict): The data source details for fetching market data.
+    """
     ghostfolio = Ghostfolio(host, access_token, symbol)
 
     # Create data profile if not exist
@@ -35,13 +64,10 @@ def ghostfolio_feeder(host: str, access_token: str, symbol: str, profile_data: d
         ghostfolio.create_profile_data()
         ghostfolio.set_profile_data(profile_data)
 
-    # Populate date from the last 90 day
+    # Populate data from the last 90 days
     if ghostfolio.market_data_is_exist():
         last_date = ghostfolio.get_last_market_data()['date'].split('T')[0]
         data_source['start_date'] = subtract_days_from_date(last_date, 90)
         ghostfolio.populate_market_data(get_market_data(data_source))
     else:
         ghostfolio.populate_market_data(get_market_data(data_source))
-    # ghostfolio.populate_market_data(get_market_data(data_source))
-
-    # ghostfolio.delete_profile_data()

@@ -1,8 +1,12 @@
+"""Ghostfolio module."""
 import requests
 
 
 class Ghostfolio:
+    """A class to interact with the Ghostfolio API for managing market and profile data."""
+
     def __init__(self, host, access_token, symbol) -> None:
+        """Initialize the Ghostfolio instance with host, access_token, and symbol."""
         self.host = host
         self.access_token = access_token
         self.symbol = symbol
@@ -13,6 +17,7 @@ class Ghostfolio:
 
 
     def get_headers(self) -> str:
+        """Return the headers required for making authorized API requests."""
         return {
             'Authorization': f'Bearer {self.auth_token}',
             'Sec-Fetch-Dest': 'empty',
@@ -22,6 +27,7 @@ class Ghostfolio:
 
 
     def get_auth_token(self) -> str:
+        """Retrieve the authentication token from the API using the access token."""
         headers = {
             'Content-Type': 'application/json',
             'Sec-Fetch-Dest': 'empty',
@@ -44,6 +50,7 @@ class Ghostfolio:
 
 
     def create_profile_data(self) -> dict:
+        """Create a new profile data entry for the specified symbol."""
         headers = self.get_headers()
 
         response = requests.post(
@@ -56,6 +63,7 @@ class Ghostfolio:
 
 
     def set_profile_data(self, profile_data) -> dict:
+        """Set the profile data for the specified symbol."""
         headers = self.get_headers()
 
         response = requests.patch(
@@ -69,6 +77,7 @@ class Ghostfolio:
 
 
     def get_market_data(self) -> list:
+        """Retrieve the market data for the specified symbol."""
         headers = self.get_headers()
 
         response = requests.get(
@@ -81,6 +90,7 @@ class Ghostfolio:
 
 
     def get_profile_data(self) -> list:
+        """Retrieve the profile data for the specified symbol."""
         headers = self.get_headers()
 
         response = requests.get(
@@ -94,6 +104,7 @@ class Ghostfolio:
 
 
     def profile_data_is_exist(self) -> bool:
+        """Check if profile data exists for the specified symbol."""
         profile_data = self.get_market_data()
 
         result = False
@@ -104,6 +115,7 @@ class Ghostfolio:
 
 
     def update_market_data(self) -> None:
+        """Update the market data for the specified symbol."""
         # Fetch market_data
         self.market_data = self.get_market_data()
         if not self.market_data:
@@ -111,6 +123,7 @@ class Ghostfolio:
 
 
     def populate_market_data(self, market_data) -> int:
+        """Populate the market data with new entries for the specified symbol."""
         headers = self.get_headers()
 
         response = requests.post(
@@ -127,6 +140,7 @@ class Ghostfolio:
 
 
     def market_data_is_exist(self) -> bool:
+        """Check if market data exists for the specified symbol."""
         result = False
         if self.market_data:
             result = True
@@ -135,10 +149,12 @@ class Ghostfolio:
 
 
     def get_last_market_data(self) -> dict:
+        """Retrieve the last entry from the market data."""
         return self.market_data[-1]
 
 
     def delete_profile_data(self) -> int:
+        """Delete the profile data for the specified symbol."""
         headers = self.get_headers()
 
         response = requests.delete(

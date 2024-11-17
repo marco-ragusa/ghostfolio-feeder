@@ -63,7 +63,7 @@ class Market:
         return cometa(self.ticker, self.start_date, self.end_date)
 
     def cfs(self) -> list:
-        """Fetches market data from Investing."""
+        """Fetches market data from Colonial First State."""
         return cfs(self.ticker, self.start_date, self.end_date)
 
     def local(self) -> list:

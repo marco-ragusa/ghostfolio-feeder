@@ -1,4 +1,3 @@
-version: '3'
 services:
   ghostfolio-feeder:
     build:
@@ -6,4 +5,5 @@ services:
     env_file:
       - .env
     volumes:
+      - ./app:/app:rw
       - ./app/data:/app/data:rw

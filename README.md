@@ -13,6 +13,7 @@ Ghostfolio-feeder extends the functionality of Ghostfolio by automatically addin
 | mediafond        | Italian pension fund              |
 | previcoop        | Italian pension fund              |
 | cometa           | Italian pension fund              |
+| cfs              | Australian Super fund             |
 | mvis             | Crypto indices used by Bitpanda   |
 | local            | CSV and JSON files stored locally |
 

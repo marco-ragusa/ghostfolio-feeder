@@ -7,6 +7,7 @@ from .fondofonte import fondofonte
 from .mediafond import mediafond
 from .previcoop import previcoop
 from .cometa import cometa
+from .cfs import cfs
 from .local import local
 
 
@@ -61,6 +62,10 @@ class Market:
         """Fetches market data from Investing."""
         return cometa(self.ticker, self.start_date, self.end_date)
 
+    def cfs(self) -> list:
+        """Fetches market data from Investing."""
+        return cfs(self.ticker, self.start_date, self.end_date)
+
     def local(self) -> list:
         """Fetches market data from local source."""
         return local(self.ticker, self.start_date, self.end_date)
@@ -75,5 +80,6 @@ data_source_mapping = {
     "mediafond": Market.mediafond,
     "previcoop": Market.previcoop,
     "cometa": Market.cometa,
+    "cfs": Market.cfs,
     "local": Market.local,
 }

@@ -144,6 +144,23 @@
         }
     },
     {
+        "symbol": "FSF0581AU",
+        "profile_data": {
+        "assetClass": "EQUITY",
+        "assetSubClass": "MUTUALFUND",
+        "comment": "",
+        "currency": "AUD",
+        "name": "CFS Index Australian Share",
+        "scraperConfiguration": {},
+        "symbolMapping": {}
+        },
+        "data_source": {
+            "name": "cfs",
+            "ticker": "FSF0581AU",
+            "start_date": "2004-07-15"
+        }
+    },
+    {
         "symbol": "CSV-LOCAL-EXAMPLE",
         "profile_data": {
             "assetClass": "EQUITY",

@@ -23,6 +23,15 @@ def download_funds() -> dict:
     """
     funds = {}
 
+    # From reverse engineering what the Fund and Performance page is doing
+    # See https://www.cfs.com.au/personal/resources/funds-and-performance/funds-and-performance-search.html
+    # FirstChoice Wholesale Investments - IF - 91
+    # FirstChoice Investments - IF - 70
+    # Managed Investment Funds - IF - 90
+    # FirstChoice Wholesale Personal Super - SF - 11
+    # FirstChoice Employer Super - SF - 65
+    # FirstChoice Wholesale Pension - RF - 51
+    # Institutional and Master trusts - WF - 120, 91, 73
     for url in [
         f"{CFS_FUNDS_URL}?companyCode=001&mainGroup=IF&expand=false&productId=91&productId=70&productId=90",
         f"{CFS_FUNDS_URL}?companyCode=001&mainGroup=SF&expand=false&productId=11&productId=65",

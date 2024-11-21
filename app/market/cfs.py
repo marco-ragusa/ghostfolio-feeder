@@ -1,9 +1,7 @@
 """Colonial First State (CFS) module."""
 
 from datetime import datetime
-from functools import cache
 import requests
-import sqlite3
 
 CFS_DOWNLOAD_URL = (
     "https://www.colonialfirststate.com.au/Price_Performance/Download.aspx"
@@ -12,8 +10,6 @@ CFS_FUNDS_URL = (
     "https://secure.colonialfirststate.com.au/fp/pricenperformance/products/funds"
 )
 
-funds_db = sqlite3.connect("file::memory:?cache=shared")
-
 # Import utils
 try:
     from market import utils
@@ -21,26 +17,12 @@ except ImportError:
     import utils
 
 
-# If we wanted to make this "even more cachey", we could save the results to a local sqlite3 file on disk.
-# This would mean that we wouldn't need to download the fund details every time ghostfolio-feeder started.
-# But we would need to delete the sqlite database file in order to force a re-download.
-@cache
-def download_funds():
-    print("CFS: Downloading fund info")
-    cur = funds_db.cursor()
-    cur.execute(
-        "CREATE TABLE IF NOT EXISTS fund(apir VARCHAR PRIMARY KEY, main_group VARCHAR, product_id INTEGER, fund_id INTEGER)"
-    )
+def download_funds() -> dict:
+    """
+    Downloads fund information and returns it as a dictionary for lookup.
+    """
+    funds = {}
 
-    # From reverse engineering what the Fund and Performance page is doing
-    # See https://www.cfs.com.au/personal/resources/funds-and-performance/funds-and-performance-search.html
-    # FirstChoice Wholesale Investments - IF - 91
-    # FirstChoice Investments - IF - 70
-    # Managed Investment Funds - IF - 90
-    # FirstChoice Wholesale Personal Super - SF - 11
-    # FirstChoice Employer Super - SF - 65
-    # FirstChoice Wholesale Pension - RF - 51
-    # Institutional and Master trusts - WF - 120, 91, 73
     for url in [
         f"{CFS_FUNDS_URL}?companyCode=001&mainGroup=IF&expand=false&productId=91&productId=70&productId=90",
         f"{CFS_FUNDS_URL}?companyCode=001&mainGroup=SF&expand=false&productId=11&productId=65",
@@ -50,28 +32,20 @@ def download_funds():
         r = requests.get(url)
         for fund in r.json()["funds"]:
             if not fund["termDeposit"]:
-                cur.execute(
-                    "INSERT INTO fund(apir, main_group, product_id, fund_id) VALUES (?, ?, ?, ?) ON CONFLICT DO NOTHING",
-                    (
-                        fund["apir"],
-                        fund["mainGroup"],
-                        fund["ivstGrup"],
-                        fund["cfsCodeVal"],
-                    ),
-                )
-    cur.close()
-    funds_db.commit()
+                funds[fund["apir"]] = {
+                    "mainGroup": fund["mainGroup"],
+                    "productID": fund["ivstGrup"],
+                    "fundID": fund["cfsCodeVal"],
+                }
+
+    return funds
 
 
-@cache
-def product_info_from_apir(apir_code: str) -> dict:
-    download_funds()
-    print(f"CFS: Looking up product info for {apir_code}")
-    cur = funds_db.cursor()
-    res = cur.execute(f"SELECT main_group, product_id, fund_id FROM fund WHERE apir = '{apir_code}'")
-    data = res.fetchone()
-    cur.close()
-    return {"mainGroup": data[0], "productID": data[1], "fundID": data[2]}
+def product_info_from_apir(apir_code: str, funds_data: dict) -> dict:
+    """
+    Looks up product information for a given APIR code in the downloaded funds data.
+    """
+    return funds_data.get(apir_code, {})
 
 
 def cfs(
@@ -96,7 +70,12 @@ def cfs(
 
     from_date = datetime.strptime(start_date, "%Y-%m-%d").strftime("%d/%m/%Y")
     to_date = datetime.strptime(end_date, "%Y-%m-%d").strftime("%d/%m/%Y")
-    product_info = product_info_from_apir(ticker)
+
+    funds_data = download_funds()
+    product_info = product_info_from_apir(ticker, funds_data)
+
+    if not product_info:
+        raise ValueError(f"No product information found for APIR code: {ticker}")
 
     market_data = []
 

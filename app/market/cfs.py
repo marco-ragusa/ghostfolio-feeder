@@ -1,6 +1,7 @@
 """Colonial First State (CFS) module."""
 
 from datetime import datetime
+from functools import cache
 import requests
 
 CFS_DOWNLOAD_URL = (
@@ -17,6 +18,7 @@ except ImportError:
     import utils
 
 
+@cache
 def download_funds() -> dict:
     """
     Downloads fund information and returns it as a dictionary for lookup.

@@ -105,28 +105,6 @@
         }
     },
     {
-        "symbol": "SPY",
-        "profile_data": {
-            "assetClass": "EQUITY",
-            "assetSubClass": "ETF",
-            "comment": "",
-            "currency": "USD",
-            "name": "SPDR® S&P 500",
-            "scraperConfiguration": {},
-            "symbolMapping": {}
-        },
-        "data_source": {
-            "name": "investing",
-            "ticker": {
-                "domain": "www",
-                "symbol": "spy",
-                "exchange": "nyse",
-                "retry": 5
-            },
-            "start_date": "2020-01-01"
-        }
-    },
-    {
         "symbol": "COMETA-REDDITO",
         "profile_data": {
             "assetClass": "EQUITY",

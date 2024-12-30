@@ -44,6 +44,7 @@ def boerse_frankfurt(
     }
     response = requests.get(
         url,
+        verify=False,
         params=query_params,
         headers=headers,
         timeout=10

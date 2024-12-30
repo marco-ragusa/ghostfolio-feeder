@@ -36,6 +36,7 @@ def corriere(ticker: str, start_date: str | None = None, end_date: str | None = 
     }
     response = requests.get(
         url,
+        verify=False,
         params=query_params,
         headers=headers,
         timeout=10,

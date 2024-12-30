@@ -80,6 +80,7 @@ def fondofonte(ticker: str, start_date: str | None = None, end_date: str | None 
     # Make an HTTP request and get the content of the page
     response = requests.get(
         url,
+        verify=False,
         headers=headers,
         timeout=10,
     )

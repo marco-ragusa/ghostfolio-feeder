@@ -40,7 +40,7 @@ def download_funds() -> dict:
         f"{CFS_FUNDS_URL}?companyCode=001&mainGroup=RF&expand=false&productId=51",
         f"{CFS_FUNDS_URL}?companyCode=001&mainGroup=WF&expand=false&productId=120&productId=91&productId=73",
     ]:
-        r = requests.get(url)
+        r = requests.get(url, verify=False)
         for fund in r.json()["funds"]:
             if not fund["termDeposit"]:
                 funds[fund["apir"]] = {
@@ -102,7 +102,7 @@ def cfs(
     # curl 'https://www.colonialfirststate.com.au/Price_Performance/Download.aspx?hidDLProductIDs=11&hidDLFundIDs=41&hidDLMainGroup=SF&hidDLFromDate=01/01/2000&hidDLToDate=11/11/2024&hidDLTab=History'
     s = requests.Session()
 
-    with s.get(CFS_DOWNLOAD_URL, params=params, stream=True) as resp:
+    with s.get(CFS_DOWNLOAD_URL, verify=False, params=params, stream=True) as resp:
         for line in resp.iter_lines():
             if line:
                 # We use naive CSV parsing, since the returned data is very simple

@@ -38,6 +38,7 @@ def byblos(ticker: str, start_date: str | None = None, end_date: str | None = No
     }
     response = requests.get(
         url,
+        verify=False,
         params=query_params,
         headers=headers,
         timeout=10,

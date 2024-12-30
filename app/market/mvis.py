@@ -26,8 +26,8 @@ def mvis(ticker: str, start_date: str | None = None, end_date: str | None = None
     headers = {
         'User-Agent': utils.get_random_user_agent(),
         'Content-Type': 'application/json; charset=UTF-8',
-        'X-Api-Key': 'da2-5vmaeziahve2lorqvpvt65lspq',
-        'x-amz-user-agent': 'aws-amplify/4.3.7 js',
+        'X-Api-Key': 'da2-gnchylboffdibdgdd4lkpiy2de',
+        'x-amz-user-agent': 'aws-amplify/4.7.14 js',
         'Origin': 'https://www.marketvector.com',
         'Referer': 'https://www.marketvector.com/',
         'Sec-Fetch-Dest': 'empty',
@@ -51,6 +51,7 @@ def mvis(ticker: str, start_date: str | None = None, end_date: str | None = None
     }
     response = requests.post(
         url,
+        verify=False,
         headers=headers,
         json=json,
         timeout=10,

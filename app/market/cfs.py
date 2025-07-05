@@ -42,12 +42,11 @@ def download_funds() -> dict:
     ]:
         r = requests.get(url, verify=False)
         for fund in r.json()["funds"]:
-            if not fund["termDeposit"]:
-                funds[fund["apir"]] = {
-                    "mainGroup": fund["mainGroup"],
-                    "productID": fund["ivstGrup"],
-                    "fundID": fund["cfsCodeVal"],
-                }
+            funds[fund["apir"]] = {
+                "mainGroup": fund["mainGroup"],
+                "productID": fund["ivstGrup"],
+                "fundID": fund["cfsCodeVal"],
+            }
 
     return funds
 

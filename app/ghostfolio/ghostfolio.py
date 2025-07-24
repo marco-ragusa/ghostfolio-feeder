@@ -16,7 +16,7 @@ class Ghostfolio:
         self.update_market_data()
 
 
-    def get_headers(self) -> str:
+    def get_headers(self) -> dict:
         """Return the headers required for making authorized API requests."""
         return {
             'Authorization': f'Bearer {self.auth_token}',
@@ -81,7 +81,7 @@ class Ghostfolio:
         headers = self.get_headers()
 
         response = requests.get(
-            f'{self.host}/api/v1/admin/market-data/MANUAL/{self.symbol}',
+            f'{self.host}/api/v1/market-data/MANUAL/{self.symbol}',
             headers=headers,
             verify=False,
             timeout=10,
@@ -94,13 +94,12 @@ class Ghostfolio:
         headers = self.get_headers()
 
         response = requests.get(
-            f'{self.host}/api/v1/admin/market-data',
+            f'{self.host}/api/v1/market-data/MANUAL/{self.symbol}',
             headers=headers,
             verify=False,
             timeout=10,
         )
-        symbol_list = response.json()["marketData"]
-        return [symbol for symbol in symbol_list if symbol["symbol"] == self.symbol]
+        return response.json()["assetProfile"]
 
 
     def profile_data_is_exist(self) -> bool:
@@ -127,7 +126,7 @@ class Ghostfolio:
         headers = self.get_headers()
 
         response = requests.post(
-            f'{self.host}/api/v1/admin/market-data/MANUAL/{self.symbol}',
+            f'{self.host}/api/v1/market-data/MANUAL/{self.symbol}',
             headers=headers,
             json=market_data,
             verify=False,

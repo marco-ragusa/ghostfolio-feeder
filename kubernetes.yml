@@ -20,10 +20,13 @@ spec:
     volumeMounts:
     - name: app-data
       mountPath: /app/data
+      readOnly: true
     envFrom:
     - configMapRef:
         name: ghostfolio-feeder-env
-  restartPolicy: Never
+    - secretRef:
+        name: ghostfolio-feeder-secret
+  restartPolicy: Always
   volumes:
   - name: app-data
     hostPath:
@@ -39,5 +42,16 @@ metadata:
   namespace: ghostfolio
 data:
   HOST: https://example.com
+  CRONTAB: "*/30 * * * *"
+
+---
+
+# Secret definition
+apiVersion: v1
+kind: Secret
+metadata:
+  name: ghostfolio-feeder-secret
+  namespace: ghostfolio
+type: Opaque
+stringData:
   ACCESS_TOKEN: your_access_token
-  INTERVAL_MINUTES: "30"

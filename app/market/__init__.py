@@ -1,2 +1,3 @@
-"""Init market."""
-from market.market import Market, data_source_mapping
+"""Market data sources."""
+
+from .market import data_source_mapping as data_source_mapping

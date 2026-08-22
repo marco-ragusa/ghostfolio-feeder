@@ -1,0 +1,47 @@
+name: ghostfolio-feeder-e2e
+
+services:
+  ghostfolio:
+    image: ${GHOSTFOLIO_IMAGE:-docker.io/ghostfolio/ghostfolio:3.58.0}
+    ports:
+      - ${GHOSTFOLIO_E2E_PORT:-3334}:3333
+    environment:
+      ACCESS_TOKEN_SALT: e2e-access-token-salt
+      DATABASE_URL: postgresql://ghostfolio:ghostfolio@postgres:5432/ghostfolio
+      DIRECT_URL: postgresql://ghostfolio:ghostfolio@postgres:5432/ghostfolio
+      JWT_SECRET_KEY: e2e-jwt-secret
+      REDIS_HOST: redis
+      REDIS_PASSWORD: ghostfolio
+      REDIS_PORT: 6379
+      ROOT_URL: http://localhost:3333
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ['CMD-SHELL', 'curl -f http://localhost:3333/api/v1/health']
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  postgres:
+    image: docker.io/library/postgres:15-alpine
+    environment:
+      POSTGRES_DB: ghostfolio
+      POSTGRES_PASSWORD: ghostfolio
+      POSTGRES_USER: ghostfolio
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U ghostfolio']
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  redis:
+    image: docker.io/library/redis:8-alpine
+    command: redis-server --requirepass ghostfolio
+    healthcheck:
+      test: ['CMD-SHELL', 'redis-cli --pass ghostfolio ping | grep PONG']
+      interval: 5s
+      timeout: 5s
+      retries: 10

@@ -1,124 +1,113 @@
-"""Tests for the Ghostfolio API client endpoint fallback behavior."""
+"""Tests for the Ghostfolio API client."""
+
 import unittest
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock, call, patch
 
 from ghostfolio import Ghostfolio
 
 
-HOST = 'https://ghostfolio.example.com'
-SYMBOL = 'TEST.SYM'
-NEW_URL = f'{HOST}/api/v1/asset-profiles/MANUAL/{SYMBOL}'
-OLD_URL = f'{HOST}/api/v1/market-data/MANUAL/{SYMBOL}'
-
-MARKET_DATA = [
-    {'date': '2026-07-01T00:00:00.000Z', 'marketPrice': 1.23},
-    {'date': '2026-07-02T00:00:00.000Z', 'marketPrice': 1.24},
-]
-ASSET_PROFILE = {'symbol': SYMBOL, 'currency': 'AUD', 'name': 'Test Fund'}
-DETAILS_BODY = {'assetProfile': ASSET_PROFILE, 'marketData': MARKET_DATA}
+HOST = "https://ghostfolio.example.com"
+SYMBOL = "TEST/SYM"
+ENCODED_SYMBOL = "TEST%2FSYM"
 
 
-def make_response(status_code=200, json_body=None):
-    """Build a mock requests response."""
-    response = MagicMock()
-    response.status_code = status_code
-    response.json.return_value = json_body if json_body is not None else {}
-    return response
+def response(status_code=200, json_body=None):
+    """Build a small requests response mock."""
+    result = MagicMock()
+    result.status_code = status_code
+    result.json.return_value = json_body if json_body is not None else {}
+    return result
 
 
-class GhostfolioEndpointTest(unittest.TestCase):
-    """Exercise new-endpoint-first, old-endpoint-fallback behavior."""
+class GhostfolioTest(unittest.TestCase):
+    """Exercise the endpoints used by the feeder."""
 
     def setUp(self):
-        Ghostfolio._endpoint_cache = {}
-        patcher = patch('ghostfolio.ghostfolio.requests')
-        self.requests = patcher.start()
+        patcher = patch("ghostfolio.ghostfolio.request")
+        self.request = patcher.start()
         self.addCleanup(patcher.stop)
-        self.requests.post.return_value = make_response(
-            200, {'authToken': 'jwt-token'}
+        self.request.return_value = response(200, {"authToken": "jwt-token"})
+        self.client = Ghostfolio(f"{HOST}/", "access-token")
+        self.request.reset_mock()
+
+    def test_authenticates_with_access_token(self):
+        self.request.return_value = response(200, {"authToken": "new-token"})
+
+        client = Ghostfolio(HOST, "secret")
+
+        self.assertEqual(client.auth_token, "new-token")
+        self.request.assert_called_once_with(
+            "POST",
+            f"{HOST}/api/v1/auth/anonymous",
+            json={"accessToken": "secret"},
         )
 
-    def make_client(self, get_responses):
-        """Create a Ghostfolio client with scripted GET responses."""
-        self.requests.get.side_effect = get_responses
-        return Ghostfolio(HOST, 'access-token', SYMBOL)
+    def test_reads_current_asset_profiles_endpoint(self):
+        details = {"assetProfile": {"symbol": SYMBOL}, "marketData": []}
+        self.request.return_value = response(200, details)
 
-    def get_urls(self):
-        """Return the list of URLs passed to requests.get."""
-        return [call.args[0] for call in self.requests.get.call_args_list]
+        self.assertEqual(self.client.get_asset_profile(SYMBOL), details)
+        self.request.assert_called_once_with(
+            "GET",
+            f"{HOST}/api/v1/asset-profiles/MANUAL/{ENCODED_SYMBOL}",
+            headers={"Authorization": "Bearer jwt-token"},
+            allowed_statuses=(404,),
+        )
 
-    def test_uses_asset_profiles_endpoint_when_available(self):
-        client = self.make_client([make_response(200, DETAILS_BODY)])
+    def test_returns_empty_details_for_missing_symbol(self):
+        self.request.return_value = response(404)
 
-        self.assertEqual(client.market_data, MARKET_DATA)
-        self.assertEqual(self.get_urls(), [NEW_URL])
+        self.assertEqual(
+            self.client.get_asset_profile(SYMBOL),
+            {"assetProfile": {}, "marketData": []},
+        )
 
-    def test_falls_back_to_market_data_endpoint_on_404(self):
-        client = self.make_client([
-            make_response(404, {'statusCode': 404}),
-            make_response(200, DETAILS_BODY),
-        ])
+    def test_writes_profile_and_market_data_to_current_endpoints(self):
+        self.request.side_effect = [response(), response(), response(201)]
+        profile = {"name": "Test"}
+        prices = {"marketData": [{"date": "2026-01-01", "marketPrice": 1.0}]}
 
-        self.assertEqual(client.market_data, MARKET_DATA)
-        self.assertEqual(self.get_urls(), [NEW_URL, OLD_URL])
+        self.client.create_profile_data(SYMBOL)
+        self.client.set_profile_data(SYMBOL, profile)
+        status = self.client.populate_market_data(SYMBOL, prices)
 
-    def test_returns_empty_when_both_endpoints_404(self):
-        client = self.make_client([
-            make_response(404, {'statusCode': 404}),
-            make_response(404, {'statusCode': 404}),
-        ])
+        self.assertEqual(status, 201)
+        self.assertEqual(
+            self.request.call_args_list,
+            [
+                call(
+                    "POST",
+                    f"{HOST}/api/v1/admin/profile-data/MANUAL/{ENCODED_SYMBOL}",
+                    headers={"Authorization": "Bearer jwt-token"},
+                ),
+                call(
+                    "PATCH",
+                    f"{HOST}/api/v1/admin/profile-data/MANUAL/{ENCODED_SYMBOL}",
+                    headers={"Authorization": "Bearer jwt-token"},
+                    json=profile,
+                ),
+                call(
+                    "POST",
+                    f"{HOST}/api/v1/market-data/MANUAL/{ENCODED_SYMBOL}",
+                    headers={"Authorization": "Bearer jwt-token"},
+                    json=prices,
+                ),
+            ],
+        )
 
-        self.assertEqual(client.market_data, [])
-        self.assertEqual(self.get_urls(), [NEW_URL, OLD_URL])
+    def test_delete_is_idempotent_for_missing_profile(self):
+        self.request.return_value = response(404)
 
-    def test_remembers_working_endpoint_after_fallback(self):
-        client = self.make_client([
-            make_response(404, {'statusCode': 404}),
-            make_response(200, DETAILS_BODY),
-            make_response(200, DETAILS_BODY),
-        ])
-        client.update_market_data()
+        status = self.client.delete_profile_data(SYMBOL)
 
-        self.assertEqual(self.get_urls(), [NEW_URL, OLD_URL, OLD_URL])
-
-    def test_remembers_new_endpoint_after_success(self):
-        client = self.make_client([
-            make_response(200, DETAILS_BODY),
-            make_response(200, DETAILS_BODY),
-        ])
-        client.update_market_data()
-
-        self.assertEqual(self.get_urls(), [NEW_URL, NEW_URL])
-
-    def test_does_not_cache_endpoint_when_both_404(self):
-        client = self.make_client([
-            make_response(404, {'statusCode': 404}),
-            make_response(404, {'statusCode': 404}),
-            make_response(200, DETAILS_BODY),
-        ])
-        client.update_market_data()
-
-        self.assertEqual(client.market_data, MARKET_DATA)
-        self.assertEqual(self.get_urls(), [NEW_URL, OLD_URL, NEW_URL])
-
-    def test_get_profile_data_returns_asset_profile(self):
-        client = self.make_client([
-            make_response(200, DETAILS_BODY),
-            make_response(200, DETAILS_BODY),
-        ])
-
-        self.assertEqual(client.get_profile_data(), ASSET_PROFILE)
-
-    def test_get_profile_data_empty_when_symbol_missing(self):
-        client = self.make_client([
-            make_response(404, {'statusCode': 404}),
-            make_response(404, {'statusCode': 404}),
-            make_response(404, {'statusCode': 404}),
-            make_response(404, {'statusCode': 404}),
-        ])
-
-        self.assertEqual(client.get_profile_data(), {})
+        self.assertEqual(status, 404)
+        self.request.assert_called_once_with(
+            "DELETE",
+            f"{HOST}/api/v1/admin/profile-data/MANUAL/{ENCODED_SYMBOL}",
+            headers={"Authorization": "Bearer jwt-token"},
+            allowed_statuses=(404,),
+        )
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

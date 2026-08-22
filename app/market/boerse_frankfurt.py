@@ -1,74 +1,67 @@
-"""Boerse Frankfurt module."""
-from datetime import datetime
-import requests
-# Import utils
-try:
-    from market import utils
-except ImportError:
-    import utils
+"""Börse Frankfurt market data source."""
+
+from datetime import date, datetime, time, timezone
+
+from http_client import request
+
+from . import utils
+
+
+URL = "https://api.live.deutsche-boerse.com/v1/tradingview/history"
+
+
+def _timestamp(value: str | None, *, end_of_day: bool = False) -> int:
+    day = date.fromisoformat(value) if value else date.today()
+    clock = time.max if end_of_day else time.min
+    return int(datetime.combine(day, clock, tzinfo=timezone.utc).timestamp())
 
 
 def boerse_frankfurt(
-        ticker: str, start_date: str | None = None, end_date: str | None = None
-    ) -> list:
-    """
-    Fetches historical market data for a given ticker symbol from the Börse Frankfurt API.
+    ticker: str,
+    start_date: str | None = None,
+    end_date: str | None = None,
+) -> list:
+    """Fetch daily closing prices from Börse Frankfurt.
 
-    Args:
-        ticker (str): The ticker symbol of the financial instrument.
-        start_date (str, optional): The start date for data retrieval (YYYY-MM-DD format).
-        end_date (str, optional): The end date for data retrieval (YYYY-MM-DD format).
-
-    Returns:
-        list: A list of dictionaries containing historical market data in the following format:
-            {'date': 'yyyy-mm-dd', 'marketPrice': float}
+    ``ticker`` uses the ``MIC:ISIN`` format, for example
+    ``XETR:CH1199067674``.
     """
-    # Get market data
-    url = 'https://api.boerse-frankfurt.de/v1/tradingview/lightweight/history/single'
-    query_params = {
-        'resolution': 'D',
-        'isKeepResolutionForLatestWeeksIfPossible': 'true',
-        'from': '0000000000',
-        'to': '9999999999',
-        'isBidAskPrice': 'false',
-        'symbols': ticker
-    }
-    headers = {
-        'User-Agent': utils.get_random_user_agent(),
-        'Accept': 'application/json, text/plain, */*',
-        'Origin': 'https://www.boerse-frankfurt.de',
-        'Referer': 'https://www.boerse-frankfurt.de/',
-        'Sec-Fetch-Dest': 'empty',
-        'Sec-Fetch-Mode': 'cors',
-        'Sec-Fetch-Site': 'same-site',
-    }
-    response = requests.get(
-        url,
-        verify=False,
-        params=query_params,
-        headers=headers,
-        timeout=10
+    response = request(
+        "GET",
+        URL,
+        headers={
+            "User-Agent": utils.BROWSER_USER_AGENT,
+            "Accept": "application/json, text/plain, */*",
+            "Accept-Language": "de-DE,de;q=0.9,en;q=0.8",
+            "Origin": "https://live.deutsche-boerse.com",
+            "Referer": "https://live.deutsche-boerse.com/",
+            "Sec-Fetch-Dest": "empty",
+            "Sec-Fetch-Mode": "cors",
+            "Sec-Fetch-Site": "same-site",
+        },
+        params={
+            "symbol": ticker,
+            "resolution": "1D",
+            "from": _timestamp(start_date or "1970-01-01"),
+            "to": _timestamp(end_date, end_of_day=True),
+        },
     )
-    market_data = response.json()[0]['quotes']['timeValuePairs']
+    payload = response.json()
 
-    # Format market data in this way {'date': 'yyyy-mm-dd', 'marketPrice': float}
-    market_data = [{
-        "marketPrice": item["value"],
-        "date": datetime.fromtimestamp(
-            item["time"]
-        ).strftime("%Y-%m-%d")
-    } for item in market_data]
+    if payload.get("s") != "ok":
+        return []
 
-    # Fill missing dates
-    market_data = utils.fill_missing_dates(market_data, start_date=start_date, end_date=end_date)
+    timestamps = payload.get("t", [])
+    closing_prices = payload.get("c", [])
+    if len(timestamps) != len(closing_prices):
+        raise ValueError("Invalid Börse Frankfurt response")
 
-    return market_data
+    market_data = [
+        {
+            "date": datetime.fromtimestamp(timestamp, timezone.utc).date().isoformat(),
+            "marketPrice": price,
+        }
+        for timestamp, price in zip(timestamps, closing_prices)
+    ]
 
-
-def main() -> None:
-    """Main function for local tests only."""
-    utils.print_list(boerse_frankfurt("XETR:CH1199067674", start_date="2022-07-31"))
-
-
-if __name__ == "__main__":
-    main()
+    return utils.fill_missing_dates(market_data, start_date, end_date)

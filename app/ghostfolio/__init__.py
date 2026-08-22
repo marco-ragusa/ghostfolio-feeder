@@ -1,2 +1,3 @@
-"""Init ghostfolio."""
-from ghostfolio.ghostfolio import Ghostfolio
+"""Ghostfolio API client."""
+
+from .ghostfolio import Ghostfolio as Ghostfolio

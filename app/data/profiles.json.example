@@ -1,6 +1,6 @@
 [
     {
-        "symbol": "21BC.DE",
+        "symbol": "GF_21BC_DE",
         "profile_data": {
             "assetClass": "EQUITY",
             "assetSubClass": "CRYPTOCURRENCY",
@@ -8,7 +8,7 @@
             "currency": "EUR",
             "name": "21Shares Bitcoin Core ETP",
             "scraperConfiguration": {
-                "url": "https://api.boerse-frankfurt.de/v1/data/quote_box/single?isin=CH1199067674&mic=XETR",
+                "url": "https://api.live.deutsche-boerse.com/v1/data/quote_box/single?isin=CH1199067674&mic=XETR",
                 "selector": "$.lastPrice"
             },
             "symbolMapping": {}
@@ -20,31 +20,29 @@
         }
     },
     {
-        "symbol": "ALL-IN-AZN",
+        "symbol": "GF_ALL_IN_AZN",
         "profile_data": {
             "assetClass": "EQUITY",
             "assetSubClass": "MUTUALFUND",
             "comment": "",
             "currency": "EUR",
             "name": "Allianz Insieme Linea Azionaria",
-            "scraperConfiguration": {},
             "symbolMapping": {}
         },
         "data_source": {
             "name": "corriere",
-            "ticker": "PEX0ALPFRA12.EUR",
+            "ticker": "FC.ALPFRA12",
             "start_date": "2016-01-01"
         }
     },
     {
-        "symbol": "BYBLOS-DIN",
+        "symbol": "GF_BYBLOS_DIN",
         "profile_data": {
             "assetClass": "EQUITY",
             "assetSubClass": "MUTUALFUND",
             "comment": "",
             "currency": "EUR",
             "name": "BYBLOS Comparto Dinamico",
-            "scraperConfiguration": {},
             "symbolMapping": {}
         },
         "data_source": {
@@ -54,14 +52,13 @@
         }
     },
     {
-        "symbol": "FONTE-DIN",
+        "symbol": "GF_FONTE_DIN",
         "profile_data": {
             "assetClass": "EQUITY",
             "assetSubClass": "MUTUALFUND",
             "comment": "",
             "currency": "EUR",
             "name": "Fon.Te. Comparto Dinamico",
-            "scraperConfiguration": {},
             "symbolMapping": {}
         },
         "data_source": {
@@ -71,14 +68,13 @@
         }
     },
     {
-        "symbol": "MEDIAFOND-DIN",
+        "symbol": "GF_MEDIAFOND_DIN",
         "profile_data": {
             "assetClass": "EQUITY",
             "assetSubClass": "MUTUALFUND",
             "comment": "",
             "currency": "EUR",
             "name": "MEDIAFOND Profilo Dinamico",
-            "scraperConfiguration": {},
             "symbolMapping": {}
         },
         "data_source": {
@@ -88,14 +84,13 @@
         }
     },
     {
-        "symbol": "PREVICOOP-DIN",
+        "symbol": "GF_PREVICOOP_DIN",
         "profile_data": {
             "assetClass": "EQUITY",
             "assetSubClass": "MUTUALFUND",
             "comment": "",
             "currency": "EUR",
             "name": "Previdenza Cooperativa Comparto Dinamico",
-            "scraperConfiguration": {},
             "symbolMapping": {}
         },
         "data_source": {
@@ -105,14 +100,13 @@
         }
     },
     {
-        "symbol": "COMETA-REDDITO",
+        "symbol": "GF_COMETA_REDDITO",
         "profile_data": {
             "assetClass": "EQUITY",
             "assetSubClass": "MUTUALFUND",
             "comment": "",
             "currency": "EUR",
             "name": "Fondo Cometa Comparto Reddito",
-            "scraperConfiguration": {},
             "symbolMapping": {}
         },
         "data_source": {
@@ -122,14 +116,13 @@
         }
     },
     {
-        "symbol": "FSF0581AU",
+        "symbol": "GF_FSF0581AU",
         "profile_data": {
         "assetClass": "EQUITY",
         "assetSubClass": "MUTUALFUND",
         "comment": "",
         "currency": "AUD",
         "name": "CFS Index Australian Share",
-        "scraperConfiguration": {},
         "symbolMapping": {}
         },
         "data_source": {
@@ -139,14 +132,13 @@
         }
     },
     {
-        "symbol": "CSV-LOCAL-EXAMPLE",
+        "symbol": "GF_CSV_LOCAL_EXAMPLE",
         "profile_data": {
             "assetClass": "EQUITY",
             "assetSubClass": "MUTUALFUND",
             "comment": "",
             "currency": "EUR",
             "name": "CSV Local Example",
-            "scraperConfiguration": {},
             "symbolMapping": {}
         },
         "data_source": {
@@ -156,14 +148,13 @@
         }
     },
     {
-        "symbol": "JSON-LOCAL-EXAMPLE",
+        "symbol": "GF_JSON_LOCAL_EXAMPLE",
         "profile_data": {
             "assetClass": "EQUITY",
             "assetSubClass": "MUTUALFUND",
             "comment": "",
             "currency": "EUR",
             "name": "JSON Local Example",
-            "scraperConfiguration": {},
             "symbolMapping": {}
         },
         "data_source": {

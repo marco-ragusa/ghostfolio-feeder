@@ -5,6 +5,12 @@ import requests
 class Ghostfolio:
     """A class to interact with the Ghostfolio API for managing market and profile data."""
 
+    # Ghostfolio 3.13.0 moved GET api/v1/market-data/:dataSource/:symbol to
+    # GET api/v1/asset-profiles/:dataSource/:symbol. The version is not
+    # discoverable without admin parsing, so probe the new endpoint first and
+    # fall back to the old one. Remembers the working endpoint per host.
+    _endpoint_cache = {}
+
     def __init__(self, host, access_token, symbol) -> None:
         """Initialize the Ghostfolio instance with host, access_token, and symbol."""
         self.host = host
@@ -76,30 +82,47 @@ class Ghostfolio:
         return response.json()
 
 
+    def get_market_data_details(self) -> dict:
+        """Retrieve the asset profile and market data for the specified symbol.
+
+        Both endpoints return the same {assetProfile, marketData} shape. A 404
+        from the new endpoint means either an old Ghostfolio version or a
+        symbol that does not exist yet, so only a successful response decides
+        which endpoint the host supports.
+        """
+        headers = self.get_headers()
+        urls = {
+            'asset-profiles': f'{self.host}/api/v1/asset-profiles/MANUAL/{self.symbol}',
+            'market-data': f'{self.host}/api/v1/market-data/MANUAL/{self.symbol}',
+        }
+
+        cached_endpoint = Ghostfolio._endpoint_cache.get(self.host)
+        endpoints = [cached_endpoint] if cached_endpoint else ['asset-profiles', 'market-data']
+
+        for endpoint in endpoints:
+            response = requests.get(
+                urls[endpoint],
+                headers=headers,
+                verify=False,
+                timeout=10,
+            )
+            if response.status_code == 404:
+                continue
+
+            Ghostfolio._endpoint_cache[self.host] = endpoint
+            return response.json()
+
+        return {'assetProfile': {}, 'marketData': []}
+
+
     def get_market_data(self) -> list:
         """Retrieve the market data for the specified symbol."""
-        headers = self.get_headers()
-
-        response = requests.get(
-            f'{self.host}/api/v1/market-data/MANUAL/{self.symbol}',
-            headers=headers,
-            verify=False,
-            timeout=10,
-        )
-        return response.json()["marketData"]
+        return self.get_market_data_details().get('marketData') or []
 
 
-    def get_profile_data(self) -> list:
+    def get_profile_data(self) -> dict:
         """Retrieve the profile data for the specified symbol."""
-        headers = self.get_headers()
-
-        response = requests.get(
-            f'{self.host}/api/v1/market-data/MANUAL/{self.symbol}',
-            headers=headers,
-            verify=False,
-            timeout=10,
-        )
-        return response.json()["assetProfile"]
+        return self.get_market_data_details().get('assetProfile') or {}
 
 
     def profile_data_is_exist(self) -> bool:
